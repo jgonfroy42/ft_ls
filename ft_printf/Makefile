@@ -23,7 +23,7 @@ CFLAGS		= -Wall -Werror -Wextra
 			$(CC) -c $< -o $(<:.c=.o) $(INCLUDES)
 
 $(NAME):	$(OBJS) ./includes/ft_printf.h
-			@make -C ./libft/
+			@make bonus -C ./libft/
 			@cp ./libft/libft.a ./$(NAME)
 			$(LIB) $(NAME) $(OBJS)
 
