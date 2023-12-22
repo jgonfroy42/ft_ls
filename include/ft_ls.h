@@ -10,7 +10,7 @@ typedef struct s_file
 {
 	char		*path;
 	char		type;
-	char		*permissions;
+	char		perm[10];
 	unsigned int	nb_links;
 	char		*owner;
 	char		*group;
@@ -52,7 +52,7 @@ int	parse_args(t_args *parsed_args, char **args);
 /*
  * utils_list.c
  */
-void	del_one_path_list(void *elem);
+void	del_file_list(void *elem);
 
 /*
  * ft_ls.c

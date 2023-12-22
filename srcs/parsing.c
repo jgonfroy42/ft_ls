@@ -26,19 +26,31 @@ t_file	*create_new_file(struct stat buffer)
 	t_file	*file = (t_file*)malloc(sizeof(t_file));
 
 /*
- * set type of file
+ * set permissions
+ * fisrt char = type of file
  */
 	switch (buffer.st_mode & S_IFMT)
 	{
-                        case S_IFBLK:  file->type = 'b';                 break;
-                        case S_IFCHR:  file->type = 'c';                 break;
-                        case S_IFDIR:  file->type = 'd';                 break;
-                        case S_IFIFO:  file->type = 'p';                 break;
-                        case S_IFLNK:  file->type = 'l';                 break;
-                        case S_IFREG:  file->type = '-';                 break;
-                        case S_IFSOCK: file->type = 's';                 break;
-                        default:       file->type = 'n';          break;
-                }
+		case S_IFBLK:  file->perm[0] = 'b'; break;
+		case S_IFCHR:  file->perm[0] = 'c'; break;
+		case S_IFDIR:  file->perm[0] = 'd'; break;
+		case S_IFIFO:  file->perm[0] = 'p'; break;
+		case S_IFLNK:  file->perm[0] = 'l'; break;
+		case S_IFREG:  file->perm[0] = '-'; break;
+		case S_IFSOCK: file->perm[0] = 's'; break;
+		default:       file->perm[0] = 'n'; break;
+	}
+
+	file->perm[1] = (buffer.st_mode & S_IRUSR) ? 'r' : '-';
+	file->perm[2] = (buffer.st_mode & S_IWUSR) ? 'w' : '-';
+	file->perm[3] = (buffer.st_mode & S_IXUSR) ? 'x' : '-';
+	file->perm[4] = (buffer.st_mode & S_IRGRP) ? 'r' : '-';
+	file->perm[5] = (buffer.st_mode & S_IWGRP) ? 'w' : '-';
+	file->perm[6] = (buffer.st_mode & S_IXGRP) ? 'x' : '-';
+	file->perm[7] = (buffer.st_mode & S_IROTH) ? 'r' : '-';
+	file->perm[8] = (buffer.st_mode & S_IWOTH) ? 'w' : '-';
+	file->perm[9] = (buffer.st_mode & S_IXOTH) ? 'x' : '-';
+
 	return file;
 }
 
@@ -52,7 +64,8 @@ int	add_file(t_args *parsed_args, char *path)
 	
 	file_info = create_new_file(buffer);
 	file_info->path = path;
-	if (file_info->type == 'd')
+
+	if (S_ISDIR(buffer.st_mode))
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
 	else
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));

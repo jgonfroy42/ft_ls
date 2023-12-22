@@ -36,10 +36,27 @@ void	init_struct(t_args *args)
 	args->list_not_dir = NULL;
 }
 
+void	test_permissions(t_args *args)
+{
+	t_list_files *list = args->list_not_dir;
+
+	while (list)
+	{
+		ft_printf("%s %s\n", list->file->perm, list->file->path);
+		list = list->next;
+	}
+}
+
+void	test(t_args *args)
+{
+	test_parsing(args);
+	test_permissions(args);
+}
+
 int main(int ac, char **av)
 {
 	(void)ac;
-	void	(*pfunc)(void *) = &del_one_path_list;
+	void	(*pfunc)(void *) = &del_file_list;
 
 	t_args *args = (t_args*)malloc(sizeof(t_args));
 
@@ -50,7 +67,7 @@ int main(int ac, char **av)
 /*
  * test
  */
-	test_parsing(args);
+	test(args);
 
 /*
  * clean
