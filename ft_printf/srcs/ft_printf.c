@@ -28,6 +28,7 @@ t_flags	ft_parse(t_flags format, const char *str, va_list ap)
 		format = get_flags(format, s_flags, ap);
 		format.type = str[format.incr];
 	}
+	free(s_flags);
 	format.incr++;
 	format.size = write_arg(format, ap);
 	format = ft_reset(format);

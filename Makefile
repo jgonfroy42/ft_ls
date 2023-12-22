@@ -3,7 +3,11 @@ NAME	= ft_ls
 SRCS_DIR = ./srcs/
 OBJS_DIR = ./objs/
 
-SRCS	= $(SRCS_DIR)main.c $(SRCS_DIR)parsing.c
+SRCS	= $(SRCS_DIR)main.c \
+	$(SRCS_DIR)parsing.c \
+	$(SRCS_DIR)utils_list.c \
+	$(SRCS_DIR)ft_ls.c
+
 
 CC	= gcc
 CFLAGS	= -Wall -Werror -Wextra -I ./include/
