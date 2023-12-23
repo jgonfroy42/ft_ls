@@ -6,6 +6,8 @@ OBJS_DIR = ./objs/
 SRCS	= $(SRCS_DIR)main.c \
 	$(SRCS_DIR)parsing.c \
 	$(SRCS_DIR)utils_list.c \
+	$(SRCS_DIR)test.c \
+	$(SRCS_DIR)parsing.c \
 	$(SRCS_DIR)ft_ls.c
 
 

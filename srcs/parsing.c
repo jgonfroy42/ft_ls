@@ -23,6 +23,12 @@ void	is_option_valid(t_args *parsed_args, char *option)
 
 t_file	*create_new_file(struct stat buffer)
 {
+	/*
+ 	* total of dir is sum of buffer.st_blocks;
+ 	*/ 
+
+	struct passwd  *pwd;
+	struct group   *grp;
 	t_file	*file = (t_file*)malloc(sizeof(t_file));
 
 	switch (buffer.st_mode & S_IFMT)
@@ -50,8 +56,9 @@ t_file	*create_new_file(struct stat buffer)
 	file->nb_links = (buffer.st_nlink);
 	file->size = (buffer.st_size);
 
-	file->owner = getpwuid(buffer.st_uid)->pw_name;
-	file->group = getgrgid(buffer.st_gid)->gr_name;
+	file->owner = ((pwd = getpwuid(buffer.st_uid))) ? pwd->pw_name : ft_itoa(buffer.st_uid);
+ 	file->group = ((grp = getgrgid(buffer.st_gid))) ? grp->gr_name : ft_itoa(buffer.st_gid); 
+
 
 	file->date = ctime(&buffer.st_mtime);
 
@@ -63,7 +70,7 @@ int	add_file(t_args *parsed_args, char *path)
 	struct	stat buffer;
 	t_file	*file_info;	
 
-	if (stat(path, &buffer) != 0)
+	if (lstat(path, &buffer) != 0)
 		return 0;
 	
 	file_info = create_new_file(buffer);

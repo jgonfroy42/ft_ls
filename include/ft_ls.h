@@ -31,6 +31,10 @@ typedef struct	s_list_files
 
 typedef struct	s_args
 {
+
+/*
+ * cmd options
+ */
 	const char	*valid;
 
 	bool	l;
@@ -39,8 +43,19 @@ typedef struct	s_args
 	bool	r;
 	bool	t;
 
+
+/*
+ * cmd arguments
+ */
 	struct s_list_files	*list_dir;
 	struct s_list_files	*list_not_dir;
+
+/*
+ * needed for colmun display
+ */
+	size_t	length_col_owner;
+	size_t	length_col_group;
+	size_t	length_col_size;
 
 }	t_args;
 
@@ -63,5 +78,16 @@ void	del_file_list(void *elem);
  */
 
 void	ft_ls(t_args *args);
+
+/*
+ * test.c
+ */
+void	tests(t_args *args);
+
+/**
+ * sorting.c
+ */
+
+void	sorting_file(t_args args, t_list_files files);
 
 #endif
