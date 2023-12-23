@@ -25,7 +25,7 @@ void	display_not_dir(t_list_files *list, bool l)
 				ft_printf("\n");
 		}
 		else
-			ft_printf("%s. %d %s %s %d %s %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, list->file->date, list->file->path);
+			ft_printf("%s. %d %s %s %d %s %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, ft_substr(list->file->date, 4, 12), list->file->path);
 		list = list->next;
 	}
 	ft_printf("\n");
