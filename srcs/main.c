@@ -22,6 +22,19 @@ void	test_parsing(t_args *args)
 	ft_lstiter((t_list *)args->list_not_dir, pfunc);
 }
 
+void	test_permissions(t_args *args)
+{
+	t_list_files *list = args->list_not_dir;
+
+	while (list)
+	{
+		ft_printf("%s %s\n", list->file->perm, list->file->path);
+		list = list->next;
+	}
+}
+
+
+
 void	init_struct(t_args *args)
 {
 	args->valid = "lRart";
@@ -35,18 +48,6 @@ void	init_struct(t_args *args)
 	args->list_dir = NULL;
 	args->list_not_dir = NULL;
 }
-
-void	test_permissions(t_args *args)
-{
-	t_list_files *list = args->list_not_dir;
-
-	while (list)
-	{
-		ft_printf("%s %s\n", list->file->perm, list->file->path);
-		list = list->next;
-	}
-}
-
 void	test(t_args *args)
 {
 	test_parsing(args);

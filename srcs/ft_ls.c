@@ -39,7 +39,7 @@ void	ft_ls(t_args *args)
  */
 
 	if (ft_lstsize((t_list *)args->list_dir) == 0 && ft_lstsize((t_list *)args->list_not_dir) == 0)
-		ft_lstadd_back((t_list **)&args->list_dir, ft_lstnew("."));
-
+		//ft_lstadd_back((t_list **)&args->list_dir, ft_lstnew(create_file(".")));
+		add_file(args, ".");
 	display_not_dir(args->list_not_dir, (args->l) ? true : false);		
 }

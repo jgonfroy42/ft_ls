@@ -49,6 +49,7 @@ typedef struct	s_args
  * parsing.c
  */
 
+int	add_file(t_args *parsed_args, char *path);
 int	parse_args(t_args *parsed_args, char **args);
 
 
