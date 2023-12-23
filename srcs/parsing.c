@@ -25,10 +25,6 @@ t_file	*create_new_file(struct stat buffer)
 {
 	t_file	*file = (t_file*)malloc(sizeof(t_file));
 
-/*
- * set permissions
- * fisrt char = type of file
- */
 	switch (buffer.st_mode & S_IFMT)
 	{
 		case S_IFBLK:  file->perm[0] = 'b'; break;
@@ -50,6 +46,14 @@ t_file	*create_new_file(struct stat buffer)
 	file->perm[7] = (buffer.st_mode & S_IROTH) ? 'r' : '-';
 	file->perm[8] = (buffer.st_mode & S_IWOTH) ? 'w' : '-';
 	file->perm[9] = (buffer.st_mode & S_IXOTH) ? 'x' : '-';
+
+	file->nb_links = (buffer.st_nlink);
+	file->size = (buffer.st_size);
+
+	file->owner = getpwuid(buffer.st_uid)->pw_name;
+	file->group = getgrgid(buffer.st_gid)->gr_name;
+
+	file->date = ctime(&buffer.st_mtime);
 
 	return file;
 }

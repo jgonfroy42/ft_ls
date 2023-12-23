@@ -5,11 +5,14 @@
 # include <sys/stat.h>
 # include <stdbool.h>
 # include "./../ft_printf/includes/ft_printf.h"
+# include <sys/types.h>
+# include <pwd.h>
+# include <grp.h>
+# include <time.h>
 
 typedef struct s_file
 {
 	char		*path;
-	char		type;
 	char		perm[10];
 	unsigned int	nb_links;
 	char		*owner;
