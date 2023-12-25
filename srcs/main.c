@@ -32,7 +32,7 @@ int main(int ac, char **av)
 /*
  * test
  */
-	tests(args);
+//	tests(args);
 
 /*
  * clean

@@ -48,10 +48,10 @@ void	ft_ls(t_args *args)
 /*
  * no args so we display current dir
  */
-
 	if (ft_lstsize((t_list *)args->list_dir) == 0 && ft_lstsize((t_list *)args->list_not_dir) == 0)
 		//ft_lstadd_back((t_list **)&args->list_dir, ft_lstnew(create_file(".")));
 		add_file(args, ".");
 	//test
+	sorting_file(args, args->list_not_dir);
 	display_not_dir(args->list_not_dir, (args->l) ? true : false);		
 }
