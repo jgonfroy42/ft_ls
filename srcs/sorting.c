@@ -1,10 +1,11 @@
 #include "../include/ft_ls.h"
+#include <ctype.h>  // <cctype> en C++
 
 bool	is_alpha_sorted(char *s1, char *s2)
 {
-	int i;
-	char c1;
-	char c2;
+	size_t	i;
+	char	c1;
+	char	c2;
 
 	i = 0;
 
@@ -15,21 +16,28 @@ bool	is_alpha_sorted(char *s1, char *s2)
 		c2 = ft_toupper(s2[i]);
 		if (c1 < c2)
 			return true;
-		if (c2 > c1)
+		if (c2 < c1)
 			return false;
-		if (isupper(c2))
-			return true;
 		i++;
 	}
 
-	if (!s1[i])
+	if (ft_strlen(s1) < ft_strlen(s2))
 		return true;
-	if (!s2[i])
+	if (ft_strlen(s1) > ft_strlen(s2))
 		return false;
-	
+
+	i = 0;	
 	while (i < ft_strlen(s1))
-		//si même nom, le premier avec une majuscule passe en deuxième.
-		//TO DO
+	{
+		if (ft_isupper(s1[i]) != ft_isupper(s2[i]))
+		{
+			if (ft_islower(s1[i]))
+				return true;
+			return false;
+		}
+		i++;
+	}
+	
 	return true;
 }
 
@@ -43,12 +51,6 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 		return a;
 	if (!args->t)
 	{
-//		int len_a = ft_strlen(a->file->path);
-//		int len_b = ft_strlen(b->file->path);
-//		int cmp = ft_strncmp(a->file->path, b->file->path, (len_a < len_b) ? len_a : len_b);
-
-//		ft_printf("%s %s : %d\n", a->file->path, b->file->path, cmp);
-//		if ((cmp < 0 && !args->r) || (cmp > 0 && args->r))
 		if (is_alpha_sorted(a->file->path, b->file->path))
 		{
 			if (!args->r)
@@ -62,7 +64,21 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 				ret->next = sort_files(args, a, b->next);
 			}
 		}
+		else
+		{
+			if (args->r)
+			{
+				ret = a;
+				ret->next = sort_files(args, a->next, b);
+			}	
+			else
+			{
+				ret = b;
+				ret->next = sort_files(args, a, b->next);
+			}
+		}
 	}
+	
 	return (ret);
 }
 
@@ -84,12 +100,6 @@ void	split_list(t_list_files *source, t_list_files **sub_a, t_list_files **sub_b
 	*sub_a = source;
 	*sub_b = slow->next;
 	slow->next = NULL;
-	
-//	void	(*pfunc)(void *) = &display_list;
-//	ft_printf("\nlist a:\n");
-//	ft_lstiter((t_list *)source, pfunc);
-//	ft_printf("\nlist b:\n");
-//	ft_lstiter((t_list *)(*sub_b), pfunc);
 }
 
 void	merge_sort(t_args *args, t_list_files **list)
@@ -105,18 +115,14 @@ void	merge_sort(t_args *args, t_list_files **list)
 	merge_sort(args, &sublist_b);
 
 	*list = sort_files(args, sublist_a, sublist_b);
-
-	void	(*pfunc)(void *) = &display_list;
-	ft_printf("\nlist sorted:\n");
-	ft_lstiter((t_list *)*list, pfunc);
-
 }
 
-void	sorting_file(t_args *args, t_list_files *files)
+void	sorting_file(t_args *args, t_list_files **files)
 {
 /*
  * algo général qui trie selon n'importe quel critère. 
  * au moment de trier choix fait grâce à args ?
  */
-	merge_sort(args, &files);
+	merge_sort(args, files);
+
 }

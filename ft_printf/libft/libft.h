@@ -68,5 +68,7 @@ void			ft_lstclear(t_list **lst, void (*del)(void *));
 t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),
 				void (*del) (void *));
 int			ft_charset(char c, char *str);
+int	ft_islower(char c);
+int	ft_isupper(char c);
 
 #endif

@@ -89,6 +89,6 @@ void	display_list(void *file);
  * sorting.c
  */
 
-void	sorting_file(t_args *args, t_list_files *files);
+void	sorting_file(t_args *args, t_list_files **files);
 
 #endif

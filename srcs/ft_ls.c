@@ -39,7 +39,6 @@ void	display_not_dir(t_list_files *list, bool l)
 			ft_printf("%s. %d %s %s %d %s %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, ft_substr(list->file->date, 4, 12), list->file->path);
 		list = list->next;
 	}
-	ft_printf("\n");
 }
 
 void	ft_ls(t_args *args)
@@ -49,9 +48,8 @@ void	ft_ls(t_args *args)
  * no args so we display current dir
  */
 	if (ft_lstsize((t_list *)args->list_dir) == 0 && ft_lstsize((t_list *)args->list_not_dir) == 0)
-		//ft_lstadd_back((t_list **)&args->list_dir, ft_lstnew(create_file(".")));
 		add_file(args, ".");
-	//test
-	sorting_file(args, args->list_not_dir);
+	
+	sorting_file(args, &args->list_not_dir);
 	display_not_dir(args->list_not_dir, (args->l) ? true : false);		
 }
