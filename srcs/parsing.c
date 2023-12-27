@@ -1,5 +1,18 @@
 #include "../include/ft_ls.h"
 
+t_time	convert_time(char *stime)
+{
+	t_time time;
+
+	time.year = ft_atoi(ft_substr(stime, 20, 4));
+	time.month = ft_substr(stime, 4, 3);
+	time.day = ft_atoi(ft_substr(stime, 8, 2));
+	time.hour = ft_atoi(ft_substr(stime, 11, 2));
+	time.minutes = ft_atoi(ft_substr(stime, 14, 2));
+	
+	return time;
+}
+
 void	is_option_valid(t_args *parsed_args, char *option)
 {
 	for (int i = 0; option[i] != 0; i++)
@@ -59,8 +72,7 @@ t_file	*create_new_file(struct stat buffer)
 	file->owner = ((pwd = getpwuid(buffer.st_uid))) ? pwd->pw_name : ft_itoa(buffer.st_uid);
  	file->group = ((grp = getgrgid(buffer.st_gid))) ? grp->gr_name : ft_itoa(buffer.st_gid); 
 
-
-	file->date = ctime(&buffer.st_mtime);
+	file->date = convert_time(ctime(&buffer.st_mtime));
 
 	return file;
 }

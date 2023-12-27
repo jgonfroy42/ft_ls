@@ -28,6 +28,15 @@
 
 void	display_not_dir(t_list_files *list, bool l)
 {
+	int current_year;
+
+	if (l)
+	{
+		time_t  seconds=time(NULL);
+		struct tm       *current_time=localtime(&seconds);
+		current_year = current_time->tm_year + 1900;
+	}
+
 	while(list)
 	{	if (!l)
 		{
@@ -36,7 +45,16 @@ void	display_not_dir(t_list_files *list, bool l)
 				ft_printf("\n");
 		}
 		else
-			ft_printf("%s. %d %s %s %d %s %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, ft_substr(list->file->date, 4, 12), list->file->path);
+		{
+			ft_printf("%s. %d %s %s %d %s %d ", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, list->file->date.month, list->file->date.day);
+
+			if (list->file->date.year == current_year)
+				ft_printf("%d:%d", list->file->date.hour, list->file->date.minutes);
+			else
+				ft_printf("%d", list->file->date.year);
+
+			ft_printf(" %s\n", list->file->path);
+		}
 		list = list->next;
 	}
 }

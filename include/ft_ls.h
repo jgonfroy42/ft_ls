@@ -10,6 +10,16 @@
 # include <grp.h>
 # include <time.h>
 
+typedef struct	time
+{
+	char	*month;
+	int	day;
+	int	hour;
+	int	minutes;
+	int	year;
+
+}	t_time;
+
 typedef struct s_file
 {
 	char		*path;
@@ -18,7 +28,7 @@ typedef struct s_file
 	char		*owner;
 	char		*group;
 	unsigned int	size;
-	char		*date;
+	t_time		date;
 
 }	t_file;
 
