@@ -42,6 +42,8 @@ void	display_not_dir(t_list_files *list, bool l)
 		{
 			ft_printf("%s", list->file->path);
 			if (list->next)
+				ft_printf(" ");
+			else
 				ft_printf("\n");
 		}
 		else
