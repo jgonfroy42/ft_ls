@@ -25,6 +25,28 @@
  *		2) même fonction qu'en 1. b 
  *
  */
+t_list_files	*get_dir_items(char *path)
+{
+	DIR *dir;
+	struct dirent *entry;
+	t_list_files	*ret;
+
+	ret = NULL;
+	if((dir = opendir(path)) == NULL)
+	{
+		ft_printf("cannot open directory: %s\n", dir);
+		return ret;
+	}
+
+	while ((entry = readdir(dir)) != NULL)
+	{
+		if (entry->d_name[0] == '.')
+			continue;
+		ft_printf("%s\n", entry->d_name);
+	}
+	closedir(dir);
+	return ret ;
+}
 
 void	display_not_dir(t_list_files *list, bool l)
 {
@@ -63,6 +85,7 @@ void	display_not_dir(t_list_files *list, bool l)
 
 void	ft_ls(t_args *args)
 {
+	t_list_files	*curr;
 
 /*
  * no args so we display current dir
@@ -72,4 +95,17 @@ void	ft_ls(t_args *args)
 	
 	sorting_file(args, &args->list_not_dir);
 	display_not_dir(args->list_not_dir, (args->l) ? true : false);		
+
+	if (!args->list_dir)
+		return ;
+
+	if (args->list_not_dir)
+		write(1, "\n", 1);
+
+	curr = args->list_dir;
+	while (curr)
+	{
+		get_dir_items(curr->file->path);		
+		curr = curr->next;
+	}
 }

@@ -1,14 +1,20 @@
 #ifndef FT_LS_H
 # define FT_LS_H
 
+# include "./../ft_printf/includes/ft_printf.h"
+
 # include <stdio.h>
 # include <sys/stat.h>
 # include <stdbool.h>
-# include "./../ft_printf/includes/ft_printf.h"
 # include <sys/types.h>
 # include <pwd.h>
 # include <grp.h>
 # include <time.h>
+# include <unistd.h>
+# include <dirent.h>
+# include <string.h>
+# include <stdlib.h>
+
 
 typedef struct	time
 {

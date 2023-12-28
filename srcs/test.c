@@ -49,14 +49,14 @@ void	test_data(t_args *args)
 	t_list_files *list = args->list_not_dir;
 	while (list)
 	{
-		ft_printf("%s. %d %s %s %d %s %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, ft_substr(list->file->date, 4, 12), list->file->path);
+		ft_printf("%s. %d %s %s %d %s %d %d:%d %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, list->file->date.month, list->file->date.day, list->file->date.hour, list->file->date.minutes, list->file->path);
 		list = list->next;
 	}
 
 	list = args->list_dir;
 	while (list)
 	{
-		ft_printf("%s. %d %s %s %d %s %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, ft_substr(list->file->date, 4, 12), list->file->path);
+		ft_printf("%s. %d %s %s %d %s %d %d:%d %s\n", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, list->file->date.month, list->file->date.day, list->file->date.hour, list->file->date.minutes, list->file->path);
 		list = list->next;
 	}
 }
