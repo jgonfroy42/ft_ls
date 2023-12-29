@@ -25,7 +25,32 @@
  *		2) même fonction qu'en 1. b 
  *
  */
-t_list_files	*get_dir_items(char *path, bool hidden)
+
+void	add_items(t_list_files **list_files, t_args *args, char *dir_path, char *path)
+{
+	struct	stat buffer;
+	t_file	*file;
+	char *real_path;
+
+	real_path = ft_strjoin(dir_path, path);
+	
+	if (args->l || args->t)
+	{
+		if (lstat(real_path, &buffer) != 0)
+			return ;
+		file = create_new_file(buffer, args->l, args->t);
+	}
+	else
+		file = (t_file *)malloc(sizeof(t_file));
+
+	file->path = path;
+	ft_lstadd_back((t_list **)list_files, ft_lstnew(file));
+
+	free(dir_path);
+	free(real_path);
+}
+
+t_list_files	*get_dir_items(t_args *args, char *path)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -40,9 +65,9 @@ t_list_files	*get_dir_items(char *path, bool hidden)
 
 	while ((entry = readdir(dir)) != NULL)
 	{
-		if (!hidden && entry->d_name[0] == '.')
+		if (!args->a && entry->d_name[0] == '.')
 			continue;
-		ft_printf("%s\n", entry->d_name);
+		add_items(&ret, args, ft_strjoin(path, "/"), entry->d_name);
 	}
 	closedir(dir);
 	return ret ;
@@ -86,6 +111,7 @@ void	display_not_dir(t_list_files *list, bool l)
 void	ft_ls(t_args *args)
 {
 	t_list_files	*curr;
+	t_list_files	*dir_items;
 
 	
 	sorting_file(args, &args->list_not_dir);
@@ -100,7 +126,10 @@ void	ft_ls(t_args *args)
 	curr = args->list_dir;
 	while (curr)
 	{
-		get_dir_items(curr->file->path, args->a);		
+		dir_items = get_dir_items(args, curr->file->path);		
+		sorting_file(args, &dir_items);
+		display_not_dir(dir_items, (args->l) ? true : false);		
 		curr = curr->next;
 	}
+	ft_lstclear((t_list **)&dir_items, del_file_list);
 }

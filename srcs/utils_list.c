@@ -2,6 +2,7 @@
 
 void	del_file_list(void *elem)
 {
+	free(((t_file*)elem)->date.month);
 	free(elem);
 }
 

@@ -86,8 +86,10 @@ typedef struct	s_args
  * parsing.c
  */
 
+t_file	*create_new_file(struct stat buffer, bool l, bool t);
 int	add_file(t_args *parsed_args, char *path);
 int	parse_args(t_args *parsed_args, char **args);
+t_time	convert_time(char *stime);
 
 
 /*

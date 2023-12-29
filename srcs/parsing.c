@@ -11,12 +11,25 @@
 t_time	convert_time(char *stime)
 {
 	t_time time;
+	char	*sub_str;
 
-	time.year = ft_atoi(ft_substr(stime, 20, 4));
+	sub_str = ft_substr(stime, 20, 4);
+	time.year = ft_atoi(sub_str);
+	free(sub_str);
+
 	time.month = ft_substr(stime, 4, 3);
-	time.day = ft_atoi(ft_substr(stime, 8, 2));
-	time.hour = ft_atoi(ft_substr(stime, 11, 2));
-	time.minutes = ft_atoi(ft_substr(stime, 14, 2));
+
+	sub_str = ft_substr(stime, 8, 2);
+	time.day = ft_atoi(sub_str);
+	free(sub_str);
+
+	sub_str = ft_substr(stime, 11, 2);
+	time.hour = ft_atoi(sub_str);
+	free(sub_str);
+
+	sub_str = ft_substr(stime, 14, 2); 	
+	time.minutes = ft_atoi(sub_str);
+	free(sub_str);
 	
 	return time;
 }
@@ -42,7 +55,7 @@ void	is_option_valid(t_args *parsed_args, char *option)
 	}
 }
 
-t_file	*create_new_file(struct stat buffer)
+t_file	*create_new_file(struct stat buffer, bool l, bool t)
 {
 	/*
  	* total of dir is sum of buffer.st_blocks;
@@ -52,6 +65,13 @@ t_file	*create_new_file(struct stat buffer)
 	struct group   *grp;
 	t_file	*file = (t_file*)malloc(sizeof(t_file));
 
+	if (!l && !t)
+		return file;
+	
+	file->date = convert_time(ctime(&buffer.st_mtime));
+	if (!l)
+		return file;
+	
 	switch (buffer.st_mode & S_IFMT)
 	{
 		case S_IFBLK:  file->perm[0] = 'b'; break;
@@ -80,8 +100,6 @@ t_file	*create_new_file(struct stat buffer)
 	file->owner = ((pwd = getpwuid(buffer.st_uid))) ? pwd->pw_name : ft_itoa(buffer.st_uid);
  	file->group = ((grp = getgrgid(buffer.st_gid))) ? grp->gr_name : ft_itoa(buffer.st_gid); 
 
-	file->date = convert_time(ctime(&buffer.st_mtime));
-
 	return file;
 }
 
@@ -93,7 +111,7 @@ int	add_file(t_args *parsed_args, char *path)
 	if (lstat(path, &buffer) != 0)
 		return 0;
 	
-	file_info = create_new_file(buffer);
+	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
 	file_info->path = path;
 
 	if (S_ISDIR(buffer.st_mode))
@@ -151,9 +169,9 @@ int	parse_args(t_args *parsed_args, char **args)
 	}
 	ft_lstclear((t_list **)&list_paths, del_path_list);
 	
- 	// if 0 args, we display current dir
+ 	// if no args, we display current dir
 	if (!path_error && ft_lstsize((t_list *)parsed_args->list_dir) == 0 && ft_lstsize((t_list *)parsed_args->list_not_dir) == 0)
-		add_file(args, ".");
+		add_file(parsed_args, ".");
 
 	return 0;
 }
