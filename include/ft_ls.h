@@ -45,6 +45,12 @@ typedef struct	s_list_files
 
 }	t_list_files;
 
+typedef struct	s_list_raw_args
+{
+	char	*path;
+	struct s_list_raw_args	*next;
+}	t_list_raw_args;
+
 typedef struct	s_args
 {
 
@@ -88,6 +94,7 @@ int	parse_args(t_args *parsed_args, char **args);
  * utils_list.c
  */
 void	del_file_list(void *elem);
+void	del_path_list(void *elem);
 
 /*
  * ft_ls.c

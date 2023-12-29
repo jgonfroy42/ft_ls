@@ -1,5 +1,13 @@
 #include "../include/ft_ls.h"
 
+/*
+ * add_file : doit pouvoir être utilisé au moment du parsing et par ft_ls.
+ * Pb : depuis ft_ls : besoin d'avoir les arguments pour pas récupérer des infos inutiles.
+ * Mais : au moment du parsing, on ne connait pas encore tous les arguments donc on ouvre tout par défaut
+ * comment faire intelligement la diff ? 
+*/
+
+
 t_time	convert_time(char *stime)
 {
 	t_time time;
@@ -100,28 +108,52 @@ int	add_file(t_args *parsed_args, char *path)
 int	parse_args(t_args *parsed_args, char **args)
 {
 /*
+ *
  * 1. on verif les args :
  * - soit pas d'args
  * - arg qui commence par "-" => on verifie que les options sont valides
  *   -> si faux message d'erreur et on arrête tout
- * - autres args, on verifie que le chemin est valide
- *   -> message d'erreur pour les chemins faut puis on exécute la commande pour les autres
+ * - autres args, on fait une liste des chemins pour s'en occuper plus tard 
+ *   Pourquoi : pas de msg d'erreur pour un chemin invalide si il y a une option invalide même après
+ * - une fois finie, on vérífie la liste des chemins
+ *   -> message d'erreur pour les chemins faux puis on exécute la commande pour les autres
  *
  *  2. que fait-on des args ?
  *  struct avec bool les options possibles à false par defaut
- *  liste chainée de path pour les args.
+ *  liste chainée de files pour les args.
  *  ATTENTION : utilisation diff entre dir et not dir => deux listes diff nécessaires
  *
  *  utilisation de stat pour vérifier la validité du chemin je stock les informations pour ne pas faire nouveau stat plus tard. Utile pour -t et -l.
 */
+	t_list_raw_args	*list_paths;
+	t_list_raw_args	*curr;
+	bool	path_error = false;
+
+	list_paths = NULL;
 
 	while (*(++args) != NULL)
 	{
 		if ((*args)[0] == '-' && (*args)[1] != 0)
 			is_option_valid(parsed_args, &((*args)[1]));
 		else
-			if (!add_file(parsed_args, *args))
-				ft_printf("ls: cannot access '%s': No such file or directory\n", *args);
+			ft_lstadd_back((t_list **)&list_paths, ft_lstnew(*args));
 	}
+
+	curr = list_paths;
+	while (curr)
+	{
+		if (!add_file(parsed_args, curr->path))
+		{
+			ft_printf("ls: cannot access '%s': No such file or directory\n", curr->path);
+			path_error = true;
+		}
+		curr = curr->next;
+	}
+	ft_lstclear((t_list **)&list_paths, del_path_list);
+	
+ 	// if 0 args, we display current dir
+	if (!path_error && ft_lstsize((t_list *)parsed_args->list_dir) == 0 && ft_lstsize((t_list *)parsed_args->list_not_dir) == 0)
+		add_file(args, ".");
+
 	return 0;
 }

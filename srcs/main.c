@@ -21,8 +21,6 @@ void	init_struct(t_args *args)
 int main(int ac, char **av)
 {
 	(void)ac;
-	void	(*pfunc)(void *) = &del_file_list;
-
 	t_args *args = (t_args*)malloc(sizeof(t_args));
 
 	init_struct(args);
@@ -37,7 +35,7 @@ int main(int ac, char **av)
 /*
  * clean
  */
-	ft_lstclear((t_list **)&args->list_dir, pfunc);
-	ft_lstclear((t_list **)&args->list_not_dir, pfunc);
+	ft_lstclear((t_list **)&args->list_dir, del_file_list);
+	ft_lstclear((t_list **)&args->list_not_dir, del_file_list);
 	free(args);
 }

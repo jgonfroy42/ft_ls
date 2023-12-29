@@ -87,11 +87,6 @@ void	ft_ls(t_args *args)
 {
 	t_list_files	*curr;
 
-/*
- * no args so we display current dir
- */
-	if (ft_lstsize((t_list *)args->list_dir) == 0 && ft_lstsize((t_list *)args->list_not_dir) == 0)
-		add_file(args, ".");
 	
 	sorting_file(args, &args->list_not_dir);
 	display_not_dir(args->list_not_dir, (args->l) ? true : false);		
