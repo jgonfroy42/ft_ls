@@ -25,7 +25,7 @@
  *		2) même fonction qu'en 1. b 
  *
  */
-t_list_files	*get_dir_items(char *path)
+t_list_files	*get_dir_items(char *path, bool hidden)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -40,7 +40,7 @@ t_list_files	*get_dir_items(char *path)
 
 	while ((entry = readdir(dir)) != NULL)
 	{
-		if (entry->d_name[0] == '.')
+		if (!hidden && entry->d_name[0] == '.')
 			continue;
 		ft_printf("%s\n", entry->d_name);
 	}
@@ -105,7 +105,7 @@ void	ft_ls(t_args *args)
 	curr = args->list_dir;
 	while (curr)
 	{
-		get_dir_items(curr->file->path);		
+		get_dir_items(curr->file->path, args->a);		
 		curr = curr->next;
 	}
 }
