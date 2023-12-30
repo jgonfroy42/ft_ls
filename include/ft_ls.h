@@ -14,7 +14,7 @@
 # include <dirent.h>
 # include <string.h>
 # include <stdlib.h>
-
+# include <errno.h>
 
 typedef struct	time
 {
@@ -29,7 +29,7 @@ typedef struct	time
 typedef struct s_file
 {
 	char		*path;
-	char		perm[10];
+	char		perm[11];
 	unsigned int	nb_links;
 	char		*owner;
 	char		*group;
@@ -69,6 +69,7 @@ typedef struct	s_args
 /*
  * cmd arguments
  */
+	bool			invalid_path;
 	struct s_list_files	*list_dir;
 	struct s_list_files	*list_not_dir;
 
@@ -87,7 +88,7 @@ typedef struct	s_args
  */
 
 t_file	*create_new_file(struct stat buffer, bool l, bool t);
-int	add_file(t_args *parsed_args, char *path);
+void	add_file(t_args *parsed_args, char *path);
 int	parse_args(t_args *parsed_args, char **args);
 t_time	convert_time(char *stime);
 

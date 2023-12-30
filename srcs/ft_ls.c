@@ -26,18 +26,20 @@
  *
  */
 
-void	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, char *path)
+long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, char *path)
 {
 	struct	stat buffer;
 	t_file	*file;
 	char *real_path;
 
 	real_path = ft_strjoin(dir_path, path);
-	
 	if (args->l || args->t)
 	{
 		if (lstat(real_path, &buffer) != 0)
-			return ;
+		{
+			ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+			return 0;
+		}
 		file = create_new_file(buffer, args->l, args->t);
 	}
 	else
@@ -48,34 +50,41 @@ void	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, char
 
 	free(dir_path);
 	free(real_path);
+	
+	if (args->l)
+		return buffer.st_blocks / 2;
+	return 0;
 }
 
-t_list_files	*get_dir_files(t_args *args, char *path)
+int	get_dir_files(t_args *args, t_list_files **files, char *path)
 {
 	DIR *dir;
 	struct dirent *entry;
-	t_list_files	*ret;
+	int total_blocks;
 
-	ret = NULL;
+	total_blocks = 0;
+
 	if((dir = opendir(path)) == NULL)
 	{
-		ft_printf("cannot open directory: %s\n", dir);
-		return ret;
+		ft_printf("ls: cannot open directory '%s': %s\n", path, strerror(errno));
+		return -1;
 	}
 
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (!args->a && entry->d_name[0] == '.')
 			continue;
-		add_dir_files(&ret, args, ft_strjoin(path, "/"), entry->d_name);
+		total_blocks += add_dir_files(files, args, ft_strjoin(path, "/"), entry->d_name);
 	}
 	closedir(dir);
-	return ret ;
+	return total_blocks;
 }
 
-void	display_not_dir(t_list_files *list, bool l)
+void	display_files(t_list_files *list, bool l, char	*parent_dir)
 {
-	int current_year;
+	int	current_year;
+	char	*link;
+	char	*real_path;
 
 	if (l)
 	{
@@ -89,7 +98,7 @@ void	display_not_dir(t_list_files *list, bool l)
 		{
 			ft_printf("%s", list->file->path);
 			if (list->next)
-				ft_printf(" ");
+				ft_printf("  ");
 			else
 				ft_printf("\n");
 		}
@@ -102,20 +111,35 @@ void	display_not_dir(t_list_files *list, bool l)
 			else
 				ft_printf("%d", list->file->date.year);
 
-			ft_printf(" %s\n", list->file->path);
+			ft_printf(" %s", list->file->path);
+			if (list->file->perm[0] == 'l')
+			{
+				if ((link = (char *)malloc(list->file->size + 1)) != NULL)
+				{
+					real_path = ft_strjoin(parent_dir, list->file->path);		
+					if (readlink(real_path, link, list->file->size + 1) != -1)
+						ft_printf(" -> %s", link);
+
+					free(link);
+					free(real_path);
+				}
+			}
+			ft_printf("\n");	
 		}
 		list = list->next;
 	}
+	free(parent_dir);
 }
 
 void	ft_ls(t_args *args)
 {
-	int		size_list;
+	long int	total_blocks;
 	t_list_files	*curr;
-	t_list_files	*dir_files;
+	t_list_files	*dir_files = NULL;
+	bool		display_name = false;
 	
 	sorting_file(args, &args->list_not_dir);
-	display_not_dir(args->list_not_dir, (args->l) ? true : false);		
+	display_files(args->list_not_dir, (args->l) ? true : false, ft_strdup("./"));		
 
 	if (!args->list_dir)
 		return ;
@@ -123,15 +147,18 @@ void	ft_ls(t_args *args)
 	if (args->list_not_dir)
 		write(1, "\n", 1);
 
-	size_list = ft_lstsize((t_list *)args->list_dir);
+	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path)
+		display_name = true;
 	curr = args->list_dir;
 	while (curr)
 	{
-		if (size_list > 1)
+		if (display_name)
 			ft_printf("%s:\n", curr->file->path);
-		dir_files = get_dir_files(args, curr->file->path);		
+		total_blocks = get_dir_files(args, &dir_files,  curr->file->path);
+		if (args->l && total_blocks != -1)
+			ft_printf("total %d\n", total_blocks);
 		sorting_file(args, &dir_files);
-		display_not_dir(dir_files, (args->l) ? true : false);		
+		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"));		
 		curr = curr->next;
 		if (curr)
 			ft_printf("\n");

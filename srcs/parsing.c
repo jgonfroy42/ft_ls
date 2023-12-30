@@ -93,6 +93,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	file->perm[7] = (buffer.st_mode & S_IROTH) ? 'r' : '-';
 	file->perm[8] = (buffer.st_mode & S_IWOTH) ? 'w' : '-';
 	file->perm[9] = (buffer.st_mode & S_IXOTH) ? 'x' : '-';
+	file->perm[10] = 0;
 
 	file->nb_links = (buffer.st_nlink);
 	file->size = (buffer.st_size);
@@ -103,13 +104,17 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	return file;
 }
 
-int	add_file(t_args *parsed_args, char *path)
+void	add_file(t_args *parsed_args, char *path)
 {
 	struct	stat buffer;
 	t_file	*file_info;	
 
 	if (lstat(path, &buffer) != 0)
-		return 0;
+	{
+		ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+		parsed_args->invalid_path = true;
+		return ;
+	}
 	
 	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
 	file_info->path = path;
@@ -118,8 +123,6 @@ int	add_file(t_args *parsed_args, char *path)
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
 	else
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
-		
-	return 1;
 }
 
 
@@ -145,7 +148,6 @@ int	parse_args(t_args *parsed_args, char **args)
 */
 	t_list_raw_args	*list_paths;
 	t_list_raw_args	*curr;
-	bool	path_error = false;
 
 	list_paths = NULL;
 
@@ -160,17 +162,13 @@ int	parse_args(t_args *parsed_args, char **args)
 	curr = list_paths;
 	while (curr)
 	{
-		if (!add_file(parsed_args, curr->path))
-		{
-			ft_printf("ls: cannot access '%s': No such file or directory\n", curr->path);
-			path_error = true;
-		}
+		add_file(parsed_args, curr->path);
 		curr = curr->next;
 	}
 	ft_lstclear((t_list **)&list_paths, del_path_list);
 	
  	// if no args, we display current dir
-	if (!path_error && ft_lstsize((t_list *)parsed_args->list_dir) == 0 && ft_lstsize((t_list *)parsed_args->list_not_dir) == 0)
+	if (ft_lstsize((t_list *)parsed_args->list_dir) == 0 && ft_lstsize((t_list *)parsed_args->list_not_dir) == 0 && !parsed_args->invalid_path)
 		add_file(parsed_args, ".");
 
 	return 0;
