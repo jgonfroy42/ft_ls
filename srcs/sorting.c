@@ -65,22 +65,29 @@ bool	is_date_sorted(t_time t1, t_time t2)
 
 bool	is_alpha_sorted(char *s1, char *s2)
 {
-	size_t	i;
+	size_t	i1, i2;
 	char	c1;
 	char	c2;
 
-	i = 0;
+	i1 = 0;
+	i2 = 0;
 
-	while (i < ft_strlen(s1) && i < ft_strlen(s2))
+	if (s1[0] == '.')
+		i1++;
+	if (s2[0] == '.')
+		i2++;
+
+	while (i1 < ft_strlen(s1) && i2 < ft_strlen(s2))
 	{
 		
-		c1 = ft_toupper(s1[i]);
-		c2 = ft_toupper(s2[i]);
+		c1 = ft_toupper(s1[i1]);
+		c2 = ft_toupper(s2[i2]);
 		if (c1 < c2)
 			return true;
 		if (c2 < c1)
 			return false;
-		i++;
+		i1++;
+		i2++;
 	}
 
 	if (ft_strlen(s1) < ft_strlen(s2))
@@ -88,16 +95,23 @@ bool	is_alpha_sorted(char *s1, char *s2)
 	if (ft_strlen(s1) > ft_strlen(s2))
 		return false;
 
-	i = 0;	
-	while (i < ft_strlen(s1))
+	i1 = 0;
+	i2 = 0;
+	if (s1[0] == '.')
+		i1++;
+	if (s2[0] == '.')
+		i2++;
+	
+	while (i1 < ft_strlen(s1))
 	{
-		if (ft_isupper(s1[i]) != ft_isupper(s2[i]))
+		if (ft_isupper(s1[i1]) != ft_isupper(s2[i2]))
 		{
-			if (ft_islower(s1[i]))
+			if (ft_islower(s1[i1]))
 				return true;
 			return false;
 		}
-		i++;
+		i1++;
+		i2++;
 	}
 	
 	return true;
@@ -195,30 +209,12 @@ void	split_list(t_list_files *source, t_list_files **sub_a, t_list_files **sub_b
 	slow->next = NULL;
 }
 
-void	merge_sort(t_args *args, t_list_files **list)
-{
-	t_list_files	*head = *list;
-	t_list_files	*sublist_a;
-	t_list_files	*sublist_b;
-
-	if (!head || !head->next)
-		return ;
-	split_list(head, &sublist_a, &sublist_b);
-	merge_sort(args, &sublist_a);
-	merge_sort(args, &sublist_b);
-
-	*list = sort_files(args, sublist_a, sublist_b);
-}
-
-
 void	sorting_file(t_args *args, t_list_files **files)
 {
 	/*
  	* algo général qui trie selon n'importe quel critère. 
  	* au moment de trier choix fait grâce à args ?
  	*/
-
-//	merge_sort(args, files);
 
 	t_list_files	*head = *files;
 	t_list_files	*sublist_a;
