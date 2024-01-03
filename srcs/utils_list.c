@@ -2,7 +2,10 @@
 
 void	del_file_list(void *elem)
 {
-	free(((t_file*)elem)->date.month);
+	if (((t_file *)elem)->date.month != NULL)
+		free(((t_file*)elem)->date.month);
+	if (((t_file *)elem)->path)
+		free(((t_file *)elem)->path);
 	free(elem);
 }
 

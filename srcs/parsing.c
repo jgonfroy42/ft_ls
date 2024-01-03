@@ -63,7 +63,10 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 
 	struct passwd  *pwd;
 	struct group   *grp;
-	t_file	*file = (t_file*)malloc(sizeof(t_file));
+	t_file	*file;
+
+	file = (t_file*)malloc(sizeof(t_file));
+	file->date.month = NULL;
 
 	if (!l && !t)
 		return file;
@@ -81,7 +84,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 		case S_IFLNK:  file->perm[0] = 'l'; break;
 		case S_IFREG:  file->perm[0] = '-'; break;
 		case S_IFSOCK: file->perm[0] = 's'; break;
-		default:       file->perm[0] = 'n'; break;
+		default:       file->perm[0] = '-'; break;
 	}
 
 	file->perm[1] = (buffer.st_mode & S_IRUSR) ? 'r' : '-';
@@ -117,7 +120,7 @@ void	add_file(t_args *parsed_args, char *path)
 	}
 	
 	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
-	file_info->path = path;
+	file_info->path = ft_strdup(path);
 
 	if (S_ISDIR(buffer.st_mode))
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));

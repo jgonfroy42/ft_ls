@@ -20,7 +20,7 @@ t_flags	ft_parse(t_flags format, const char *str, va_list ap)
 	start = format.incr;
 	while (str[format.incr] && (ft_charset(str[format.incr], FLAG)))
 		format.incr++;
-	s_flags = ft_substr(str, start, format.incr - start);
+	s_flags = ft_substr(str, start, format.incr - start + 1);
 	if (!str[format.incr])
 		return (format);
 	else

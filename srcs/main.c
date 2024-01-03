@@ -9,7 +9,7 @@ void	init_struct(t_args *args)
 	args->a = false;
 	args->r = false;
 	args->t = false;
-		
+
 	args->list_dir = NULL;
 	args->list_not_dir = NULL;
 
@@ -22,6 +22,10 @@ void	init_struct(t_args *args)
 
 int main(int ac, char **av)
 {
+//	struct stat buffer;
+//	lstat("/tmp/zellij-1000", &buffer);
+//	printf("test: %s\n", getpwuid(buffer.st_uid)->pw_name);
+
 	(void)ac;
 	t_args *args = (t_args*)malloc(sizeof(t_args));
 
@@ -39,5 +43,6 @@ int main(int ac, char **av)
  */
 	ft_lstclear((t_list **)&args->list_dir, del_file_list);
 	ft_lstclear((t_list **)&args->list_not_dir, del_file_list);
+	ft_lstsize((t_list *)args->list_not_dir);
 	free(args);
 }

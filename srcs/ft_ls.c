@@ -38,19 +38,23 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 		if (lstat(real_path, &buffer) != 0)
 		{
 			ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+			free(dir_path);
+			free(real_path);
 			return 0;
 		}
 		file = create_new_file(buffer, args->l, args->t);
 	}
 	else
+	{
 		file = (t_file *)malloc(sizeof(t_file));
-
+		file->date.month = NULL;
+	}
 	file->path = path;
 	ft_lstadd_back((t_list **)list_files, ft_lstnew(file));
 
 	free(dir_path);
 	free(real_path);
-	
+
 	if (args->l)
 		return buffer.st_blocks / 2;
 	return 0;
@@ -74,7 +78,7 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 	{
 		if (!args->a && entry->d_name[0] == '.')
 			continue;
-		total_blocks += add_dir_files(files, args, ft_strjoin(path, "/"), entry->d_name);
+		total_blocks += add_dir_files(files, args, ft_strjoin(path, "/"), ft_strdup(entry->d_name));
 	}
 	closedir(dir);
 	return total_blocks;
@@ -159,6 +163,7 @@ void	ft_ls(t_args *args)
 			ft_printf("total %d\n", total_blocks);
 		sorting_file(args, &dir_files);
 		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"));		
+
 		curr = curr->next;
 		if (curr)
 			ft_printf("\n");
