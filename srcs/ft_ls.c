@@ -153,6 +153,7 @@ void	ft_ls(t_args *args)
 
 	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path)
 		display_name = true;
+	sorting_file(args, &args->list_dir);
 	curr = args->list_dir;
 	while (curr)
 	{
@@ -167,6 +168,6 @@ void	ft_ls(t_args *args)
 		curr = curr->next;
 		if (curr)
 			ft_printf("\n");
+		ft_lstclear((t_list **)&dir_files, del_file_list);
 	}
-	ft_lstclear((t_list **)&dir_files, del_file_list);
 }

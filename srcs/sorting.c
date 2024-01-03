@@ -210,12 +210,26 @@ void	merge_sort(t_args *args, t_list_files **list)
 	*list = sort_files(args, sublist_a, sublist_b);
 }
 
+
 void	sorting_file(t_args *args, t_list_files **files)
 {
-/*
- * algo général qui trie selon n'importe quel critère. 
- * au moment de trier choix fait grâce à args ?
- */
-	merge_sort(args, files);
+	/*
+ 	* algo général qui trie selon n'importe quel critère. 
+ 	* au moment de trier choix fait grâce à args ?
+ 	*/
+
+//	merge_sort(args, files);
+
+	t_list_files	*head = *files;
+	t_list_files	*sublist_a;
+	t_list_files	*sublist_b;
+
+	if (!head || !head->next)
+		return ;
+	split_list(head, &sublist_a, &sublist_b);
+	sorting_file(args, &sublist_a);
+	sorting_file(args, &sublist_b);
+
+	*files = sort_files(args, sublist_a, sublist_b);
 
 }
