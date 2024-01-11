@@ -51,7 +51,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	}
 	file->path = path;
 	ft_lstadd_back((t_list **)list_files, ft_lstnew(file));
-
+	
 	free(dir_path);
 	free(real_path);
 
@@ -141,7 +141,11 @@ void	ft_ls(t_args *args)
 	t_list_files	*curr;
 	t_list_files	*dir_files = NULL;
 	bool		display_name = false;
-	
+
+/*
+ * tri et affichage des arguments autres que les dir
+ */
+
 	sorting_file(args, &args->list_not_dir);
 	display_files(args->list_not_dir, (args->l) ? true : false, ft_strdup("./"));		
 
@@ -150,6 +154,10 @@ void	ft_ls(t_args *args)
 
 	if (args->list_not_dir)
 		write(1, "\n", 1);
+
+/*
+ * tri, récupération du contenue et affichage des args dir
+ */
 
 	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path)
 		display_name = true;
@@ -160,11 +168,11 @@ void	ft_ls(t_args *args)
 		if (display_name)
 			ft_printf("%s:\n", curr->file->path);
 		total_blocks = get_dir_files(args, &dir_files,  curr->file->path);
+		
 		if (args->l && total_blocks != -1)
 			ft_printf("total %d\n", total_blocks);
 		sorting_file(args, &dir_files);
 		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"));		
-
 		curr = curr->next;
 		if (curr)
 			ft_printf("\n");

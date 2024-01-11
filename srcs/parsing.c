@@ -2,9 +2,6 @@
 
 /*
  * add_file : doit pouvoir être utilisé au moment du parsing et par ft_ls.
- * Pb : depuis ft_ls : besoin d'avoir les arguments pour pas récupérer des infos inutiles.
- * Mais : au moment du parsing, on ne connait pas encore tous les arguments donc on ouvre tout par défaut
- * comment faire intelligement la diff ? 
 */
 
 
@@ -55,6 +52,20 @@ void	is_option_valid(t_args *parsed_args, char *option)
 	}
 }
 
+t_file	*init_file()
+{
+	t_file	*file;
+	
+	file = (t_file*)malloc(sizeof(t_file));
+	if (file)
+	{
+		file->date.month = NULL;
+		file->owner = NULL;
+		file->group = NULL;
+	}
+	return file;
+}
+
 t_file	*create_new_file(struct stat buffer, bool l, bool t)
 {
 	/*
@@ -66,9 +77,8 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	t_file	*file;
 
 	file = (t_file*)malloc(sizeof(t_file));
-	file->date.month = NULL;
 
-	if (!l && !t)
+	if ((!l && !t) || !file)
 		return file;
 	
 	file->date = convert_time(ctime(&buffer.st_mtime));
@@ -101,9 +111,8 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	file->nb_links = (buffer.st_nlink);
 	file->size = (buffer.st_size);
 
-	file->owner = ((pwd = getpwuid(buffer.st_uid))) ? pwd->pw_name : ft_itoa(buffer.st_uid);
- 	file->group = ((grp = getgrgid(buffer.st_gid))) ? grp->gr_name : ft_itoa(buffer.st_gid); 
-
+	file->owner = ((pwd = getpwuid(buffer.st_uid))) ? ft_strdup(pwd->pw_name) : ft_strdup(ft_itoa(buffer.st_uid));
+ 	file->group = ((grp = getgrgid(buffer.st_gid))) ? ft_strdup(grp->gr_name) : ft_strdup(ft_itoa(buffer.st_gid)); 
 	return file;
 }
 
@@ -139,7 +148,7 @@ int	parse_args(t_args *parsed_args, char **args)
  *   -> si faux message d'erreur et on arrête tout
  * - autres args, on fait une liste des chemins pour s'en occuper plus tard 
  *   Pourquoi : pas de msg d'erreur pour un chemin invalide si il y a une option invalide même après
- * - une fois finie, on vérífie la liste des chemins
+ * - une fois fini, on vérífie la liste des chemins
  *   -> message d'erreur pour les chemins faux puis on exécute la commande pour les autres
  *
  *  2. que fait-on des args ?
@@ -147,7 +156,7 @@ int	parse_args(t_args *parsed_args, char **args)
  *  liste chainée de files pour les args.
  *  ATTENTION : utilisation diff entre dir et not dir => deux listes diff nécessaires
  *
- *  utilisation de stat pour vérifier la validité du chemin je stock les informations pour ne pas faire nouveau stat plus tard. Utile pour -t et -l.
+ *  utilisation de stat pour vérifier la validité du chemin et stocker les informations nécessaires (dépend de -t et -l).
 */
 	t_list_raw_args	*list_paths;
 	t_list_raw_args	*curr;
@@ -170,7 +179,7 @@ int	parse_args(t_args *parsed_args, char **args)
 	}
 	ft_lstclear((t_list **)&list_paths, del_path_list);
 	
- 	// if no args, we display current dir
+ 	// if no paths (valid or invalid), arg is current dir
 	if (ft_lstsize((t_list *)parsed_args->list_dir) == 0 && ft_lstsize((t_list *)parsed_args->list_not_dir) == 0 && !parsed_args->invalid_path)
 		add_file(parsed_args, ".");
 

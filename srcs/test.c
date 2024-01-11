@@ -5,6 +5,12 @@ void	display_list(void *file)
 	ft_printf("elem :%s\n", ((t_file *)file)->path);
 }
 
+void	display_owners(void *file)
+{
+	ft_printf("-> File: %s\nOwner: %s\n\n", ((t_file *)file)->path, ((t_file *)file)->owner);
+}
+
+
 void	test_parsing(t_args *args)
 {
 /*

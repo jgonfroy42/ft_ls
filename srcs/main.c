@@ -22,10 +22,6 @@ void	init_struct(t_args *args)
 
 int main(int ac, char **av)
 {
-//	struct stat buffer;
-//	lstat("/tmp/zellij-1000", &buffer);
-//	printf("test: %s\n", getpwuid(buffer.st_uid)->pw_name);
-
 	(void)ac;
 	t_args *args = (t_args*)malloc(sizeof(t_args));
 
