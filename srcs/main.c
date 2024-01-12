@@ -12,6 +12,7 @@ void	init_struct(t_args *args)
 
 	args->list_dir = NULL;
 	args->list_not_dir = NULL;
+	args->recursion = NULL;
 
 	args->length_col_owner = 0;
 	args->length_col_group = 0;

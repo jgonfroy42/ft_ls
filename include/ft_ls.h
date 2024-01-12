@@ -80,6 +80,8 @@ typedef struct	s_args
 	size_t	length_col_group;
 	size_t	length_col_size;
 
+	struct	s_list_files	*recursion;
+
 }	t_args;
 
 
@@ -87,6 +89,7 @@ typedef struct	s_args
  * parsing.c
  */
 
+t_file	*init_file();
 t_file	*create_new_file(struct stat buffer, bool l, bool t);
 void	add_file(t_args *parsed_args, char *path);
 int	parse_args(t_args *parsed_args, char **args);

@@ -26,6 +26,28 @@
  *
  */
 
+void	copy_args(t_args *src, t_args *dest)
+{
+	dest->valid = "lRart";
+
+	dest->l = src->l;
+	dest->R = src->R;
+	dest->a = src->a;
+	dest->r = src->r;
+	dest->t = src->t;
+
+	dest->list_not_dir = NULL;
+	dest->list_dir = src->recursion;
+	dest->recursion = NULL;
+
+	src->length_col_owner = 0;
+	src->length_col_group = 0;
+	src->length_col_size = 0;
+
+	src->invalid_path = false;
+}
+
+
 long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, char *path)
 {
 	struct	stat buffer;
@@ -42,13 +64,35 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 			free(real_path);
 			return 0;
 		}
-		file = create_new_file(buffer, args->l, args->t);
+		if (args->l || args->t)
+			file = create_new_file(buffer, args->l, args->t);
+		if (args->R)
+		{
+			if (S_ISDIR(buffer.st_mode))
+			{
+				t_file	*dir = init_file();
+				dir->path = ft_strdup(real_path);
+				ft_lstadd_back((t_list **)&args->recursion, ft_lstnew(dir));	
+			}
+		}
+			
 	}
 	else
 	{
-		file = (t_file *)malloc(sizeof(t_file));
-		file->date.month = NULL;
+		file = init_file();
+		if (args->R)
+		{
+			if (lstat(real_path, &buffer) != 0)
+				ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+			if (S_ISDIR(buffer.st_mode))
+			{
+				t_file	*dir = init_file();
+				dir->path = ft_strdup(real_path);
+				ft_lstadd_back((t_list **)&args->recursion, ft_lstnew(dir));	
+			}
+		}
 	}
+
 	file->path = path;
 	ft_lstadd_back((t_list **)list_files, ft_lstnew(file));
 	
@@ -152,19 +196,20 @@ void	ft_ls(t_args *args)
 	if (!args->list_dir)
 		return ;
 
-	if (args->list_not_dir)
+	if (args->list_not_dir || args->R)
 		write(1, "\n", 1);
 
 /*
  * tri, récupération du contenue et affichage des args dir
  */
 
-	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path)
+	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path || args->R)
 		display_name = true;
 	sorting_file(args, &args->list_dir);
 	curr = args->list_dir;
 	while (curr)
 	{
+		ft_lstclear((t_list **)&args->recursion, del_file_list);
 		if (display_name)
 			ft_printf("%s:\n", curr->file->path);
 		total_blocks = get_dir_files(args, &dir_files,  curr->file->path);
@@ -172,7 +217,14 @@ void	ft_ls(t_args *args)
 		if (args->l && total_blocks != -1)
 			ft_printf("total %d\n", total_blocks);
 		sorting_file(args, &dir_files);
-		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"));		
+		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"));
+		if (args->R)
+		{
+			t_args	*recursion_args = (t_args*)malloc(sizeof(t_args));
+			copy_args(args, recursion_args);
+			ft_ls(recursion_args);
+			free(recursion_args);
+		}	
 		curr = curr->next;
 		if (curr)
 			ft_printf("\n");
