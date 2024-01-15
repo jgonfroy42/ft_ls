@@ -100,7 +100,8 @@ t_time	convert_time(char *stime);
  * utils_list.c
  */
 void	del_file_list(void *elem);
-void	del_path_list(void *elem);
+void	del_elem(void *elem);
+t_list_files	*copy_list(t_list_files *src);
 
 /*
  * ft_ls.c

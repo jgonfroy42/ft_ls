@@ -13,10 +13,25 @@ void	del_file_list(void *elem)
 	free(elem);
 }
 
-void	del_path_list(void *elem)
+//possibilité de remplacer le pointeur sur function par NULL ?
+void	del_elem(void *elem)
 {
 /*
  * You do nothing Jonh Snow
  */
 	(void)elem;
+}
+
+void	*copy_file_elem(void *elem)
+{
+	t_file	*file;
+
+	file = init_file();
+	file->path = ft_strdup(((t_file*)elem)->path);
+	return file;
+}
+
+t_list_files	*copy_list(t_list_files *src)
+{
+	return (t_list_files *)ft_lstmap((t_list*)src, copy_file_elem, del_elem);
 }

@@ -76,7 +76,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	struct group   *grp;
 	t_file	*file;
 
-	file = (t_file*)malloc(sizeof(t_file));
+	file = init_file();
 
 	if ((!l && !t) || !file)
 		return file;
@@ -177,7 +177,7 @@ int	parse_args(t_args *parsed_args, char **args)
 		add_file(parsed_args, curr->path);
 		curr = curr->next;
 	}
-	ft_lstclear((t_list **)&list_paths, del_path_list);
+	ft_lstclear((t_list **)&list_paths, del_elem);
 	
  	// if no paths (valid or invalid), arg is current dir
 	if (ft_lstsize((t_list *)parsed_args->list_dir) == 0 && ft_lstsize((t_list *)parsed_args->list_not_dir) == 0 && !parsed_args->invalid_path)

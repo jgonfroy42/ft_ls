@@ -37,14 +37,15 @@ void	copy_args(t_args *src, t_args *dest)
 	dest->t = src->t;
 
 	dest->list_not_dir = NULL;
-	dest->list_dir = src->recursion;
+	dest->list_dir = copy_list(src->recursion);
+
 	dest->recursion = NULL;
 
-	src->length_col_owner = 0;
-	src->length_col_group = 0;
-	src->length_col_size = 0;
+	dest->length_col_owner = 0;
+	dest->length_col_group = 0;
+	dest->length_col_size = 0;
 
-	src->invalid_path = false;
+	dest->invalid_path = false;
 }
 
 
@@ -209,7 +210,6 @@ void	ft_ls(t_args *args)
 	curr = args->list_dir;
 	while (curr)
 	{
-		ft_lstclear((t_list **)&args->recursion, del_file_list);
 		if (display_name)
 			ft_printf("%s:\n", curr->file->path);
 		total_blocks = get_dir_files(args, &dir_files,  curr->file->path);
@@ -223,6 +223,7 @@ void	ft_ls(t_args *args)
 			t_args	*recursion_args = (t_args*)malloc(sizeof(t_args));
 			copy_args(args, recursion_args);
 			ft_ls(recursion_args);
+			ft_lstclear((t_list **)&recursion_args->list_dir, del_file_list);
 			free(recursion_args);
 		}	
 		curr = curr->next;
@@ -230,4 +231,5 @@ void	ft_ls(t_args *args)
 			ft_printf("\n");
 		ft_lstclear((t_list **)&dir_files, del_file_list);
 	}
+	ft_lstclear((t_list **)&args->recursion, del_file_list);
 }
