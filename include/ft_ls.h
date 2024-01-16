@@ -15,6 +15,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <errno.h>
+#include <sys/sysmacros.h>
 
 typedef struct	time
 {
@@ -34,6 +35,8 @@ typedef struct s_file
 	char		*owner;
 	char		*group;
 	unsigned int	size;
+	unsigned int	dev_major;
+	unsigned int	dev_minor;
 	t_time		date;
 
 }	t_file;

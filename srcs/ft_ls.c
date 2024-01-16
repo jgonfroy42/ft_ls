@@ -155,7 +155,14 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir)
 		}
 		else
 		{
-			ft_printf("%s. %d %s %s %d %s %d ", list->file->perm, list->file->nb_links, list->file->owner, list->file->group, list->file->size, list->file->date.month, list->file->date.day);
+			ft_printf("%s. %d %s %s ", list->file->perm, list->file->nb_links, list->file->owner, list->file->group);
+
+			if (list->file->perm[0] == 'c' || list->file->perm[0] == 'b')
+				ft_printf("%u, %u ", list->file->dev_major, list->file->dev_minor);
+			else
+				ft_printf("%u ", list->file->size);
+
+			ft_printf("%s %d ", list->file->date.month, list->file->date.day);
 
 			if (list->file->date.year == current_year)
 				ft_printf("%d:%d", list->file->date.hour, list->file->date.minutes);

@@ -97,25 +97,45 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 		default:       file->perm[0] = '-'; break;
 	}
 
+
 	file->perm[1] = (buffer.st_mode & S_IRUSR) ? 'r' : '-';
 	file->perm[2] = (buffer.st_mode & S_IWUSR) ? 'w' : '-';
-	file->perm[3] = (buffer.st_mode & S_IXUSR) ? 'x' : '-';
 	file->perm[4] = (buffer.st_mode & S_IRGRP) ? 'r' : '-';
 	file->perm[5] = (buffer.st_mode & S_IWGRP) ? 'w' : '-';
-	file->perm[6] = (buffer.st_mode & S_IXGRP) ? 'x' : '-';
 	file->perm[7] = (buffer.st_mode & S_IROTH) ? 'r' : '-';
 	file->perm[8] = (buffer.st_mode & S_IWOTH) ? 'w' : '-';
-	file->perm[9] = (buffer.st_mode & S_IXOTH) ? 'x' : '-';
+
+	//droits speciaux	
+	if (buffer.st_mode & S_ISUID)
+		file->perm[3] = (buffer.st_mode & S_IXUSR) ? 's' : 'S';
+	else
+		file->perm[3] = (buffer.st_mode & S_IXUSR) ? 'x' : '-';
+	if (buffer.st_mode & S_ISGID)
+		file->perm[6] = (buffer.st_mode & S_IXGRP) ? 's' : 'S';
+	else
+		file->perm[6] = (buffer.st_mode & S_IXGRP) ? 'x' : '-';
+
 	if (buffer.st_mode & S_ISVTX)
 		file->perm[9] = (buffer.st_mode & S_IXOTH) ? 't' : 'T';
+	else
+		file->perm[9] = (buffer.st_mode & S_IXOTH) ? 'x' : '-';
+	
 
 	file->perm[10] = 0;
 	
 	file->nb_links = (buffer.st_nlink);
-	file->size = (buffer.st_size);
 
 	file->owner = ((pwd = getpwuid(buffer.st_uid))) ? ft_strdup(pwd->pw_name) : ft_strdup(ft_itoa(buffer.st_uid));
  	file->group = ((grp = getgrgid(buffer.st_gid))) ? ft_strdup(grp->gr_name) : ft_strdup(ft_itoa(buffer.st_gid)); 
+
+	if (file->perm[0] == 'b' || file->perm[0] == 'c')
+	{
+		file->dev_major = major(buffer.st_rdev);
+		file->dev_minor = minor(buffer.st_rdev);
+	}
+	else
+		file->size = (buffer.st_size);
+
 	return file;
 }
 
