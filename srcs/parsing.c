@@ -106,8 +106,11 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	file->perm[7] = (buffer.st_mode & S_IROTH) ? 'r' : '-';
 	file->perm[8] = (buffer.st_mode & S_IWOTH) ? 'w' : '-';
 	file->perm[9] = (buffer.st_mode & S_IXOTH) ? 'x' : '-';
-	file->perm[10] = 0;
+	if (buffer.st_mode & S_ISVTX)
+		file->perm[9] = (buffer.st_mode & S_IXOTH) ? 't' : 'T';
 
+	file->perm[10] = 0;
+	
 	file->nb_links = (buffer.st_nlink);
 	file->size = (buffer.st_size);
 
