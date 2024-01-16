@@ -80,7 +80,11 @@ typedef struct	s_args
 	size_t	length_col_group;
 	size_t	length_col_size;
 
+/*
+ * for -R option
+ */
 	struct	s_list_files	*recursion;
+	bool	recursion_call;
 
 }	t_args;
 

@@ -19,6 +19,7 @@ void	init_struct(t_args *args)
 	args->length_col_size = 0;
 
 	args->invalid_path = false;
+	args->recursion_call = false;
 }
 
 int main(int ac, char **av)

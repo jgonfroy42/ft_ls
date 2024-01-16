@@ -28,6 +28,8 @@
 
 void	copy_args(t_args *src, t_args *dest)
 {
+	dest->recursion_call = true;
+
 	dest->valid = "lRart";
 
 	dest->l = src->l;
@@ -197,7 +199,7 @@ void	ft_ls(t_args *args)
 	if (!args->list_dir)
 		return ;
 
-	if (args->list_not_dir || args->R)
+	if (args->list_not_dir || args->recursion_call)
 		write(1, "\n", 1);
 
 /*
