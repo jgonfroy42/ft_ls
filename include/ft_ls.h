@@ -77,11 +77,9 @@ typedef struct	s_args
 	struct s_list_files	*list_not_dir;
 
 /*
- * needed for colmun display
+ * needed for column display
  */
-	size_t	length_col_owner;
-	size_t	length_col_group;
-	size_t	length_col_size;
+	size_t	len_col[4];
 
 /*
  * for -R option

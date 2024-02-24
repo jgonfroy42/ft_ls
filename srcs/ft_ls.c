@@ -41,12 +41,13 @@ void	copy_args(t_args *src, t_args *dest)
 	dest->list_not_dir = NULL;
 	dest->list_dir = copy_list(src->recursion);
 
+	dest->len_col[0] = 0;
+	dest->len_col[1] = 0;
+	dest->len_col[2] = 0;
+	dest->len_col[3] = 0;
+
+
 	dest->recursion = NULL;
-
-	dest->length_col_owner = 0;
-	dest->length_col_group = 0;
-	dest->length_col_size = 0;
-
 	dest->invalid_path = false;
 }
 
@@ -67,7 +68,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 			free(real_path);
 			return 0;
 		}
-		if (args->l || args->t)
+//		if (args->l || args->t)
 			file = create_new_file(buffer, args->l, args->t);
 		if (args->R)
 		{
@@ -103,7 +104,18 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	free(real_path);
 
 	if (args->l)
+	{
+		if (ft_strlen(ft_itoa(file->nb_links)) > args->len_col[0])
+ 			args->len_col[0]= ft_strlen(ft_itoa(file->size));
+		if (ft_strlen(file->owner) > args->len_col[1])
+ 			args->len_col[1] = ft_strlen(file->owner);
+		if (ft_strlen(file->group) > args->len_col[2])
+ 			args->len_col[2] = ft_strlen(file->group);
+		if (ft_strlen(ft_itoa(file->size)) > args->len_col[3])
+ 			args->len_col[3] = ft_strlen(ft_itoa(file->size));
+
 		return buffer.st_blocks / 2;
+	}
 	return 0;
 }
 
@@ -114,6 +126,10 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 	int total_blocks;
 
 	total_blocks = 0;
+	args->len_col[0] = 0;
+	args->len_col[0] = 1;
+	args->len_col[0] = 2;
+	args->len_col[0] = 3;
 
 	if((dir = opendir(path)) == NULL)
 	{
@@ -131,7 +147,7 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 	return total_blocks;
 }
 
-void	display_files(t_list_files *list, bool l, char	*parent_dir)
+void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[4])
 {
 	int	current_year;
 	char	*link;
@@ -155,12 +171,12 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir)
 		}
 		else
 		{
-			ft_printf("%s. %d %s %s ", list->file->perm, list->file->nb_links, list->file->owner, list->file->group);
+			ft_printf("%s. %-*d %-*s %-*s ", list->file->perm, len_col[0], list->file->nb_links, len_col[1], list->file->owner, len_col[2], list->file->group);
 
 			if (list->file->perm[0] == 'c' || list->file->perm[0] == 'b')
 				ft_printf("%u, %u ", list->file->dev_major, list->file->dev_minor);
 			else
-				ft_printf("%u ", list->file->size);
+				ft_printf("%-*u ", len_col[3], list->file->size);
 
 			ft_printf("%s %d ", list->file->date.month, list->file->date.day);
 
@@ -201,7 +217,7 @@ void	ft_ls(t_args *args)
  */
 
 	sorting_file(args, &args->list_not_dir);
-	display_files(args->list_not_dir, (args->l) ? true : false, ft_strdup("./"));		
+	display_files(args->list_not_dir, (args->l) ? true : false, ft_strdup("./"), args->len_col);
 
 	if (!args->list_dir)
 		return ;
@@ -226,7 +242,7 @@ void	ft_ls(t_args *args)
 		if (args->l && total_blocks != -1)
 			ft_printf("total %d\n", total_blocks);
 		sorting_file(args, &dir_files);
-		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"));
+		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"), args->len_col);
 		if (args->R)
 		{
 			t_args	*recursion_args = (t_args*)malloc(sizeof(t_args));

@@ -14,9 +14,10 @@ void	init_struct(t_args *args)
 	args->list_not_dir = NULL;
 	args->recursion = NULL;
 
-	args->length_col_owner = 0;
-	args->length_col_group = 0;
-	args->length_col_size = 0;
+	args->len_col[0] = 0;
+	args->len_col[1] = 0;
+	args->len_col[2] = 0;
+	args->len_col[3] = 0;
 
 	args->invalid_path = false;
 	args->recursion_call = false;
