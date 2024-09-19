@@ -127,9 +127,9 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 
 	total_blocks = 0;
 	args->len_col[0] = 0;
-	args->len_col[0] = 1;
-	args->len_col[0] = 2;
-	args->len_col[0] = 3;
+	args->len_col[1] = 0;
+	args->len_col[2] = 0;
+	args->len_col[3] = 0;
 
 	if((dir = opendir(path)) == NULL)
 	{
@@ -176,14 +176,14 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 			if (list->file->perm[0] == 'c' || list->file->perm[0] == 'b')
 				ft_printf("%u, %u ", list->file->dev_major, list->file->dev_minor);
 			else
-				ft_printf("%-*u ", len_col[3], list->file->size);
+				ft_printf("%*-u ", len_col[3], list->file->size);
 
 			ft_printf("%s %d ", list->file->date.month, list->file->date.day);
 
 			if (list->file->date.year == current_year)
-				ft_printf("%d:%d", list->file->date.hour, list->file->date.minutes);
+				ft_printf("%d:%02d", list->file->date.hour, list->file->date.minutes);
 			else
-				ft_printf("%d", list->file->date.year);
+				ft_printf(" %d", list->file->date.year);
 
 			ft_printf(" %s", list->file->path);
 			if (list->file->perm[0] == 'l')
@@ -217,7 +217,7 @@ void	ft_ls(t_args *args)
  */
 
 	sorting_file(args, &args->list_not_dir);
-	display_files(args->list_not_dir, (args->l) ? true : false, ft_strdup("./"), args->len_col);
+	display_files(args->list_not_dir, args->l, ft_strdup("./"), args->len_col);
 
 	if (!args->list_dir)
 		return ;
@@ -226,7 +226,7 @@ void	ft_ls(t_args *args)
 		write(1, "\n", 1);
 
 /*
- * tri, récupération du contenue et affichage des args dir
+ * tri, récupération du contenu et affichage des args dir
  */
 
 	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path || args->R)

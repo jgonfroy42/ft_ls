@@ -82,6 +82,12 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 		return file;
 	
 	file->date = convert_time(ctime(&buffer.st_mtime));
+	time_t diff = time(NULL) - buffer.st_mtime;
+	if (((diff / 6) / 30) / 24 < 3600)
+		ft_printf("new file\n");
+	else	
+		ft_printf("old file\n");
+
 	if (!l)
 		return file;
 	
@@ -170,7 +176,7 @@ int	parse_args(t_args *parsed_args, char **args)
  * - arg qui commence par "-" => on verifie que les options sont valides
  *   -> si faux message d'erreur et on arrête tout
  * - autres args, on fait une liste des chemins pour s'en occuper plus tard 
- *   Pourquoi : pas de msg d'erreur pour un chemin invalide si il y a une option invalide même après
+ *   Pourquoi ? pas de msg d'erreur pour un chemin invalide si il y a une option invalide même après
  * - une fois fini, on vérífie la liste des chemins
  *   -> message d'erreur pour les chemins faux puis on exécute la commande pour les autres
  *
