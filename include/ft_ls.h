@@ -24,7 +24,7 @@ typedef struct	time
 	int	hour;
 	int	minutes;
 	int	year;
-
+	bool	old;
 }	t_time;
 
 typedef struct s_file

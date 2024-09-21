@@ -106,7 +106,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	if (args->l)
 	{
 		if (ft_strlen(ft_itoa(file->nb_links)) > args->len_col[0])
- 			args->len_col[0]= ft_strlen(ft_itoa(file->size));
+ 			args->len_col[0]= ft_strlen(ft_itoa(file->nb_links));
 		if (ft_strlen(file->owner) > args->len_col[1])
  			args->len_col[1] = ft_strlen(file->owner);
 		if (ft_strlen(file->group) > args->len_col[2])
@@ -114,6 +114,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 		if (ft_strlen(ft_itoa(file->size)) > args->len_col[3])
  			args->len_col[3] = ft_strlen(ft_itoa(file->size));
 
+		printf("file size %-u\n", file->size);
 		return buffer.st_blocks / 2;
 	}
 	return 0;
@@ -142,6 +143,7 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 		if (!args->a && entry->d_name[0] == '.')
 			continue;
 		total_blocks += add_dir_files(files, args, ft_strjoin(path, "/"), ft_strdup(entry->d_name));
+
 	}
 	closedir(dir);
 	return total_blocks;
@@ -149,16 +151,8 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 
 void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[4])
 {
-	int	current_year;
 	char	*link;
 	char	*real_path;
-
-	if (l)
-	{
-		time_t  seconds=time(NULL);
-		struct tm       *current_time=localtime(&seconds);
-		current_year = current_time->tm_year + 1900;
-	}
 
 	while(list)
 	{	if (!l)
@@ -171,7 +165,11 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 		}
 		else
 		{
-			ft_printf("%s. %-*d %-*s %-*s ", list->file->perm, len_col[0], list->file->nb_links, len_col[1], list->file->owner, len_col[2], list->file->group);
+			ft_printf("%s. %*d %-*s %-*s ", list->file->perm, len_col[0], list->file->nb_links, len_col[1], list->file->owner, len_col[2], list->file->group);
+//
+//si dev maj/minor et size dans le même ls -> col size et dev minor doivent être aligné
+//=> imprimer dev maj, dev minor
+//ou imprimer max_len dev maj (+ 1 pour la virgule si diff de 0) puis size (larg col dépend de dev minor ou size)
 
 			if (list->file->perm[0] == 'c' || list->file->perm[0] == 'b')
 				ft_printf("%u, %u ", list->file->dev_major, list->file->dev_minor);
@@ -180,10 +178,10 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 
 			ft_printf("%s %d ", list->file->date.month, list->file->date.day);
 
-			if (list->file->date.year == current_year)
-				ft_printf("%d:%02d", list->file->date.hour, list->file->date.minutes);
-			else
+			if (list->file->date.old)
 				ft_printf(" %d", list->file->date.year);
+			else
+				ft_printf("%02d:%02d", list->file->date.hour, list->file->date.minutes);
 
 			ft_printf(" %s", list->file->path);
 			if (list->file->perm[0] == 'l')

@@ -82,11 +82,15 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 		return file;
 	
 	file->date = convert_time(ctime(&buffer.st_mtime));
+
+	/*
+ 	* display time if file less than 6 months old; else display year
+ 	* we check it now so we can get rid of st_mtime;
+ 	*/	
 	time_t diff = time(NULL) - buffer.st_mtime;
-	if (((diff / 6) / 30) / 24 < 3600)
-		ft_printf("new file\n");
-	else	
-		ft_printf("old file\n");
+	file->date.old = true;
+	if (((diff / 6) / (365.25 / 12)) / 24 < 3600)
+		file->date.old = false;
 
 	if (!l)
 		return file;
