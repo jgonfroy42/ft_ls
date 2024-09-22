@@ -41,10 +41,11 @@ void	copy_args(t_args *src, t_args *dest)
 	dest->list_not_dir = NULL;
 	dest->list_dir = copy_list(src->recursion);
 
-	dest->len_col[0] = 0;
-	dest->len_col[1] = 0;
-	dest->len_col[2] = 0;
-	dest->len_col[3] = 0;
+	dest->LEN_LINKS = 0;
+	dest->LEN_OWNER = 0;
+	dest->LEN_GROUP = 0;
+	dest->LEN_SIZE = 0;
+	dest->LEN_DEV_MAJ = 0;
 
 
 	dest->recursion = NULL;
@@ -105,16 +106,22 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 
 	if (args->l)
 	{
-		if (ft_strlen(ft_itoa(file->nb_links)) > args->len_col[0])
- 			args->len_col[0]= ft_strlen(ft_itoa(file->nb_links));
-		if (ft_strlen(file->owner) > args->len_col[1])
- 			args->len_col[1] = ft_strlen(file->owner);
-		if (ft_strlen(file->group) > args->len_col[2])
- 			args->len_col[2] = ft_strlen(file->group);
-		if (ft_strlen(ft_itoa(file->size)) > args->len_col[3])
- 			args->len_col[3] = ft_strlen(ft_itoa(file->size));
+		if (ft_strlen(ft_itoa(file->nb_links)) > args->LEN_LINKS)
+ 			args->LEN_LINKS= ft_strlen(ft_itoa(file->nb_links));
+		if (ft_strlen(file->owner) > args->LEN_OWNER)
+ 			args->LEN_OWNER = ft_strlen(file->owner);
+		if (ft_strlen(file->group) > args->LEN_GROUP)
+ 			args->LEN_GROUP = ft_strlen(file->group);
+		if (file->perm[0] == 'b' || file->perm[0] == 'c')
+		{
+			if (ft_strlen(ft_itoa(file->dev_major)) > args->LEN_DEV_MAJ)
+				args->LEN_DEV_MAJ = ft_strlen(ft_itoa(file->dev_major));
+			if (ft_strlen(ft_itoa(file->dev_minor)) > args->LEN_SIZE)
+ 				args->LEN_SIZE = ft_strlen(ft_itoa(file->dev_minor));
+		}
+		else if (ft_strlen(ft_itoa(file->size)) > args->LEN_SIZE)
+ 			args->LEN_SIZE = ft_strlen(ft_itoa(file->size));
 
-		printf("file size %-u\n", file->size);
 		return buffer.st_blocks / 2;
 	}
 	return 0;
@@ -127,10 +134,11 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 	int total_blocks;
 
 	total_blocks = 0;
-	args->len_col[0] = 0;
-	args->len_col[1] = 0;
-	args->len_col[2] = 0;
-	args->len_col[3] = 0;
+	args->LEN_LINKS = 0;
+	args->LEN_OWNER = 0;
+	args->LEN_GROUP = 0;
+	args->LEN_SIZE = 0;
+	args->LEN_DEV_MAJ = 0;
 
 	if((dir = opendir(path)) == NULL)
 	{
@@ -149,7 +157,7 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 	return total_blocks;
 }
 
-void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[4])
+void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[5])
 {
 	char	*link;
 	char	*real_path;
@@ -165,16 +173,17 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 		}
 		else
 		{
-			ft_printf("%s. %*d %-*s %-*s ", list->file->perm, len_col[0], list->file->nb_links, len_col[1], list->file->owner, len_col[2], list->file->group);
-//
-//si dev maj/minor et size dans le même ls -> col size et dev minor doivent être aligné
-//=> imprimer dev maj, dev minor
-//ou imprimer max_len dev maj (+ 1 pour la virgule si diff de 0) puis size (larg col dépend de dev minor ou size)
+			ft_printf("%s. %*d %-*s %-*s ", list->file->perm, LEN_LINKS, list->file->nb_links, LEN_OWNER, list->file->owner, LEN_GROUP, list->file->group);
 
+			/*
+ 			* LEN_COL need to include size of '$LEN_DEV_MAJOR, $LEN_DEV_MINOR' if there is c or b files
+ 			* in this case, LEN_DEV_MAJ != 0
+ 			*/
+  
 			if (list->file->perm[0] == 'c' || list->file->perm[0] == 'b')
-				ft_printf("%u, %u ", list->file->dev_major, list->file->dev_minor);
+				ft_printf("%*u, %*u ", LEN_DEV_MAJ, list->file->dev_major, LEN_SIZE,  list->file->dev_minor);
 			else
-				ft_printf("%*-u ", len_col[3], list->file->size);
+				ft_printf("%*-u ", LEN_DEV_MAJ > 0 ? LEN_SIZE + LEN_DEV_MAJ + 2: LEN_SIZE, list->file->size);
 
 			ft_printf("%s %d ", list->file->date.month, list->file->date.day);
 

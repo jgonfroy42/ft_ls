@@ -15,7 +15,13 @@
 # include <string.h>
 # include <stdlib.h>
 # include <errno.h>
-#include <sys/sysmacros.h>
+# include <sys/sysmacros.h>
+
+# define LEN_LINKS len_col[0]
+# define LEN_OWNER len_col[1]
+# define LEN_GROUP len_col[2]
+# define LEN_SIZE len_col[3]
+# define LEN_DEV_MAJ len_col[4]
 
 typedef struct	time
 {
@@ -79,7 +85,7 @@ typedef struct	s_args
 /*
  * needed for column display
  */
-	size_t	len_col[4];
+	size_t	len_col[5];
 
 /*
  * for -R option
