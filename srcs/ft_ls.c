@@ -244,6 +244,7 @@ void	ft_ls(t_args *args)
 	{
 		if (display_name)
 			ft_printf("%s:\n", curr->file->path);
+
 		total_blocks = get_dir_files(args, &dir_files,  curr->file->path);
 		
 		if (args->l && total_blocks != -1)
