@@ -163,7 +163,8 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 	char	*real_path;
 
 	while(list)
-	{	if (!l)
+	{	
+		if (!l)
 		{
 			ft_printf("%s", list->file->path);
 			if (list->next)

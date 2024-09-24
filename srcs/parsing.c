@@ -62,7 +62,6 @@ t_file	*init_file()
 		file->date.month = NULL;
 		file->owner = NULL;
 		file->group = NULL;
-		file->link = NULL;
 	}
 	return file;
 }
@@ -153,6 +152,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 void	add_file(t_args *parsed_args, char *path)
 {
 	struct	stat buffer;
+	struct	stat buffer_symlink;
 	t_file	*file_info;	
 
 	if (lstat(path, &buffer) != 0)
@@ -164,8 +164,19 @@ void	add_file(t_args *parsed_args, char *path)
 	
 	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
 	file_info->path = ft_strdup(path);
+ 
 
 	if (S_ISDIR(buffer.st_mode))
+		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
+	/*
+ 	* symlink on a dir:
+ 	* if (-l)
+ 	* 	act like a file
+ 	* else
+ 	* 	act like a dir
+ 	*/
+  
+	else if (!parsed_args->l && !stat(path, &buffer_symlink) && S_ISDIR(buffer_symlink.st_mode))
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
 	else
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
