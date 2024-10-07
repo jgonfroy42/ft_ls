@@ -25,6 +25,17 @@
  *		2) même fonction qu'en 1. b 
  *
  */
+bool	is_relative_path(char *path)
+{
+	if (path[0] == '.')
+	{
+		if (path[1] == '\0')
+			return true;
+		if (path[1] == '.' && path[2] == '\0')
+			return true;
+	}
+	return false;
+}
 
 void	copy_args(t_args *src, t_args *dest)
 {
@@ -55,9 +66,9 @@ void	copy_args(t_args *src, t_args *dest)
 
 long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, char *path)
 {
-	struct	stat buffer;
-	t_file	*file;
-	char *real_path;
+	struct stat	buffer;
+	t_file		*file;
+	char		*real_path;
 
 	real_path = ft_strjoin(dir_path, path);
 	if (args->l || args->t)
@@ -69,15 +80,17 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 			free(real_path);
 			return 0;
 		}
-//		if (args->l || args->t)
-			file = create_new_file(buffer, args->l, args->t);
+		file = create_new_file(buffer, args->l, args->t);
 		if (args->R)
 		{
 			if (S_ISDIR(buffer.st_mode))
 			{
-				t_file	*dir = init_file();
-				dir->path = ft_strdup(real_path);
-				ft_lstadd_back((t_list **)&args->recursion, ft_lstnew(dir));	
+				if (!is_relative_path(path))
+				{
+					t_file	*dir = init_file();
+					dir->path = ft_strdup(real_path);
+					ft_lstadd_back((t_list **)&args->recursion, ft_lstnew(dir));	
+				}	
 			}
 		}
 			
@@ -91,9 +104,12 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 				ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
 			if (S_ISDIR(buffer.st_mode))
 			{
-				t_file	*dir = init_file();
-				dir->path = ft_strdup(real_path);
-				ft_lstadd_back((t_list **)&args->recursion, ft_lstnew(dir));	
+				if (!is_relative_path(path))
+				{
+					t_file	*dir = init_file();
+					dir->path = ft_strdup(real_path);
+					ft_lstadd_back((t_list **)&args->recursion, ft_lstnew(dir));	
+				}
 			}
 		}
 	}
@@ -106,21 +122,34 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 
 	if (args->l)
 	{
-		if (ft_strlen(ft_itoa(file->nb_links)) > args->LEN_LINKS)
- 			args->LEN_LINKS= ft_strlen(ft_itoa(file->nb_links));
+		char	*nb_links= ft_itoa(file->nb_links);
+		char	*size = ft_itoa(file->size);
+
+		if (ft_strlen(nb_links) > args->LEN_LINKS)
+ 			args->LEN_LINKS = ft_strlen(nb_links);
+		free(nb_links);
+
 		if (ft_strlen(file->owner) > args->LEN_OWNER)
  			args->LEN_OWNER = ft_strlen(file->owner);
 		if (ft_strlen(file->group) > args->LEN_GROUP)
  			args->LEN_GROUP = ft_strlen(file->group);
+
 		if (file->perm[0] == 'b' || file->perm[0] == 'c')
 		{
-			if (ft_strlen(ft_itoa(file->dev_major)) > args->LEN_DEV_MAJ)
-				args->LEN_DEV_MAJ = ft_strlen(ft_itoa(file->dev_major));
-			if (ft_strlen(ft_itoa(file->dev_minor)) > args->LEN_SIZE)
- 				args->LEN_SIZE = ft_strlen(ft_itoa(file->dev_minor));
+			char	*nb_dev_major = ft_itoa(file->dev_major);
+			char	*nb_dev_minor = ft_itoa(file->dev_minor);
+
+			if (ft_strlen(nb_dev_major) > args->LEN_DEV_MAJ)
+				args->LEN_DEV_MAJ = ft_strlen(nb_dev_major);
+			if (ft_strlen(nb_dev_minor) > args->LEN_SIZE)
+ 				args->LEN_SIZE = ft_strlen(nb_dev_minor);
+	
+			free(nb_dev_major);
+			free(nb_dev_minor);
 		}
-		else if (ft_strlen(ft_itoa(file->size)) > args->LEN_SIZE)
- 			args->LEN_SIZE = ft_strlen(ft_itoa(file->size));
+		else if (ft_strlen(size) > args->LEN_SIZE)
+ 			args->LEN_SIZE = ft_strlen(size);
+		free(size);
 
 		return buffer.st_blocks / 2;
 	}
@@ -264,6 +293,8 @@ void	ft_ls(t_args *args)
 		if (curr)
 			ft_printf("\n");
 		ft_lstclear((t_list **)&dir_files, del_file_list);
+		ft_lstclear((t_list **)&args->recursion, del_file_list);
+		args->recursion = NULL;
 	}
 	ft_lstclear((t_list **)&args->recursion, del_file_list);
 }

@@ -170,9 +170,9 @@ void	add_file(t_args *parsed_args, char *path)
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
 	/*
  	* symlink on a dir:
- 	* if (-l)
- 	* 	act like a file
- 	* else
+ 	* IF -l THEN
+ 	* 	symlink act like a file
+ 	* ELSE
  	* 	act like a dir
  	*/
   

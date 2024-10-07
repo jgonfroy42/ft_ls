@@ -26,6 +26,7 @@ void	init_struct(t_args *args)
 
 int main(int ac, char **av)
 {
+//
 	(void)ac;
 	t_args *args = (t_args*)malloc(sizeof(t_args));
 
@@ -33,10 +34,13 @@ int main(int ac, char **av)
 	parse_args(args, av);
 	ft_ls(args);
 
+
 /*
  * test
- */
-	//tests(args);
+ 
+	tests(args);
+	(void)av;
+*/
 
 /*
  * clean

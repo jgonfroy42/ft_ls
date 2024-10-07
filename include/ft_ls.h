@@ -127,7 +127,7 @@ void	tests(t_args *args);
 void	display_list(void *file);
 void	display_owners(void *file);
 
-/**
+/*
  * sorting.c
  */
 
