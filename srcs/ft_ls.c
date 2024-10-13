@@ -75,7 +75,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	{
 		if (lstat(real_path, &buffer) != 0)
 		{
-			ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+			print_error("ls: cannot acces '", path, strerror(errno));
 			free(dir_path);
 			free(real_path);
 			return 0;
@@ -101,7 +101,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 		if (args->R)
 		{
 			if (lstat(real_path, &buffer) != 0)
-				ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+				print_error("ls: cannot acces '", path, strerror(errno));
 			if (S_ISDIR(buffer.st_mode))
 			{
 				if (!is_relative_path(path))
@@ -171,7 +171,7 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 
 	if((dir = opendir(path)) == NULL)
 	{
-		ft_printf("ls: cannot open directory '%s': %s\n", path, strerror(errno));
+		print_error("ls: cannot open directory '", path, strerror(errno));
 		return -1;
 	}
 
@@ -197,7 +197,7 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 		{
 			ft_printf("%s", list->file->path);
 			if (list->next)
-				ft_printf("  ");
+				ft_printf("\t");
 			else
 				ft_printf("\n");
 		}

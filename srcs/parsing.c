@@ -157,7 +157,7 @@ void	add_file(t_args *parsed_args, char *path)
 
 	if (lstat(path, &buffer) != 0)
 	{
-		ft_printf("ls: cannot access '%s': %s\n", path, strerror(errno));
+		print_error("ls: cannot access '", path, strerror(errno));
 		parsed_args->invalid_path = true;
 		return ;
 	}

@@ -133,4 +133,10 @@ void	display_owners(void *file);
 
 void	sorting_file(t_args *args, t_list_files **files);
 
+/*
+ * handle_error.c
+ */
+
+void	print_error(char *problem, char *path, char *strerr);
+
 #endif
