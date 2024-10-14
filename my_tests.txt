@@ -1,0 +1,5 @@
+-a
+-l test
+-Ra .git
+/
+/ -lat

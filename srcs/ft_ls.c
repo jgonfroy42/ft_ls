@@ -215,7 +215,7 @@ void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[
 			else
 				ft_printf("%*-u ", LEN_DEV_MAJ > 0 ? LEN_SIZE + LEN_DEV_MAJ + 2: LEN_SIZE, list->file->size);
 
-			ft_printf("%s %d ", list->file->date.month, list->file->date.day);
+			ft_printf("%s %2d ", list->file->date.month, list->file->date.day);
 
 			if (list->file->date.old)
 				ft_printf(" %d", list->file->date.year);

@@ -2,23 +2,36 @@
 
 > result.log
 
-for (( ; ; ))
-do
-	read -p  "Enter arguments of ls to test: " args
-	if  cmp -s <(ls $args 2>&1 ) <(./ft_ls $args 2>&1 | tr '\t' '\n')
+compare ()
+{
+	if  cmp -s <(ls $1 2>&1 ) <(./ft_ls $1 2>&1 | tr '\t' '\n')
 	then	
-		printf "./ft_ls $args: ✅\n" | tee -a result.log
+		printf "./ft_ls $1: ✅\n" | tee -a result.log
 	else
-  		printf "./ft_ls $args: ❌\n" | tee -a result.log
-		read -p "Display difference between ls $args and ./ft_ls $args ? (y) " display
+  		printf "./ft_ls $1: ❌\n" | tee -a result.log
+		read -p "Display difference between ls $1 and ./ft_ls $1 ? (y) " display
 		if [[ $display == "y" ]]; then
-			diff <(ls $args 2>&1 ) <(./ft_ls $args 2>&1 | tr '\t' '\n') | tee -a result.log
+			diff <(ls $1 2>&1 ) <(./ft_ls $1 2>&1 | tr '\t' '\n') | tee -a result.log
 		fi
 	fi
-	echo -e	| tee -a result.log
+
+}
+
+for (( ; ; ))
+do
+	read -p  "Enter a file or arguments: " args
+
+	if [ -f  "$args" ] ; then
+		while IFS= read -r line
+		do
+			compare "$line"
+		done < $args
+		echo -e	| tee -a result.log
+
+	else
+		compare "$args"
+		echo -e	| tee -a result.log
+	fi
 done
 
-
-##TO DO : seulement afficher x ou v et faire des fichiers de log qui résume toutes les commandes testées à la fin (avec erreur ou non)
-##est-ce qu'on garde en mémoire toutes les diff ? Est-ce qu'on affiche que les erreurs ? Deux fichiers de log : testés et error ?
-
+#add leaks verification ?

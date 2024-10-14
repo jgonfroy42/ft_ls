@@ -65,54 +65,21 @@ bool	is_date_sorted(t_time t1, t_time t2)
 
 bool	is_alpha_sorted(char *s1, char *s2)
 {
-	size_t	i1, i2;
-	char	c1;
-	char	c2;
+	size_t	i = 0;
 
-	i1 = 0;
-	i2 = 0;
-
-	if (s1[0] == '.')
-		i1++;
-	if (s2[0] == '.')
-		i2++;
-
-	while (i1 < ft_strlen(s1) && i2 < ft_strlen(s2))
+	while (i < ft_strlen(s1) && i < ft_strlen(s2))
 	{
-		
-		c1 = ft_toupper(s1[i1]);
-		c2 = ft_toupper(s2[i2]);
-		if (c1 < c2)
+		if (s1[i] < s2[i])
 			return true;
-		if (c2 < c1)
+		if (s2[i] < s1[i])
 			return false;
-		i1++;
-		i2++;
+		i++;
 	}
 
 	if (ft_strlen(s1) < ft_strlen(s2))
 		return true;
 	if (ft_strlen(s1) > ft_strlen(s2))
 		return false;
-
-	i1 = 0;
-	i2 = 0;
-	if (s1[0] == '.')
-		i1++;
-	if (s2[0] == '.')
-		i2++;
-	
-	while (i1 < ft_strlen(s1))
-	{
-		if (ft_isupper(s1[i1]) != ft_isupper(s2[i2]))
-		{
-			if (ft_islower(s1[i1]))
-				return true;
-			return false;
-		}
-		i1++;
-		i2++;
-	}
 	
 	return true;
 }
