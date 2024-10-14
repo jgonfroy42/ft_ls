@@ -1,30 +1,21 @@
 #!/bin/bash
 
-> diff.log
-
-# Set the color variable
-green='\033[0;32m'
-red='\033[0;31m'
-# Clear the color after that
-clear='\033[0m'
-
-declare -i wc_result=0
+> result.log
 
 for (( ; ; ))
 do
-	echo -e
 	read -p  "Enter arguments of ls to test: " args
-#	diff <(ls $args) <(./ft_ls $args| tr '\t' '\n') >> diff.log
-#	if [ $(wc -c < diff.log) -eq $wc_result ]; then
-	if cmp -s <(ls $args) <(./ft_ls $args| tr '\t' '\n'); then
-		printf "./ft_ls $args: ✅\n"
+	if  cmp -s <(ls $args 2>&1 ) <(./ft_ls $args 2>&1 | tr '\t' '\n')
+	then	
+		printf "./ft_ls $args: ✅\n" | tee -a result.log
 	else
-  		printf "./ft_ls $args: ❌\n"
-		read -p "Display 'diff ls $args ./ft_ls $args' ? (y/n) " display
+  		printf "./ft_ls $args: ❌\n" | tee -a result.log
+		read -p "Display difference between ls $args and ./ft_ls $args ? (y) " display
 		if [[ $display == "y" ]]; then
-			less diff.log
+			diff <(ls $args 2>&1 ) <(./ft_ls $args 2>&1 | tr '\t' '\n') | tee -a result.log
+		fi
 	fi
-fi	
+	echo -e	| tee -a result.log
 done
 
 
