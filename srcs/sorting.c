@@ -63,7 +63,8 @@ bool	is_date_sorted(t_time t1, t_time t2)
 	return true;
 }
 
-bool	is_alpha_sorted(char *s1, char *s2)
+
+bool	is_ascii_sorted(char *s1, char *s2)
 {
 	size_t	i = 0;
 
@@ -125,7 +126,7 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 
 	else
 	{
-		if (is_alpha_sorted(a->file->path, b->file->path))
+		if (is_ascii_sorted(a->file->path, b->file->path))
 		{
 			if (!args->r)
 			{

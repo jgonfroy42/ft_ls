@@ -73,6 +73,8 @@ typedef struct	s_args
 	bool	a;
 	bool	r;
 	bool	t;
+	bool	d;
+	bool	one;
 
 
 /*

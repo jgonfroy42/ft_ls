@@ -48,6 +48,8 @@ void	copy_args(t_args *src, t_args *dest)
 	dest->a = src->a;
 	dest->r = src->r;
 	dest->t = src->t;
+	dest->d = src->d;
+	dest->one = src->one;
 
 	dest->list_not_dir = NULL;
 	dest->list_dir = copy_list(src->recursion);
@@ -186,18 +188,18 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 	return total_blocks;
 }
 
-void	display_files(t_list_files *list, bool l, char	*parent_dir, size_t len_col[5])
+void	display_files(t_list_files *list, t_args *args, char *parent_dir, size_t len_col[5])
 {
 	char	*link;
 	char	*real_path;
 
 	while(list)
 	{	
-		if (!l)
+		if (!args->l)
 		{
 			ft_printf("%s", list->file->path);
-			if (list->next)
-				ft_printf("\t");
+			if (list->next && !args->one)
+				ft_printf("  ");
 			else
 				ft_printf("\n");
 		}
@@ -254,7 +256,7 @@ void	ft_ls(t_args *args)
  */
 
 	sorting_file(args, &args->list_not_dir);
-	display_files(args->list_not_dir, args->l, ft_strdup("./"), args->len_col);
+	display_files(args->list_not_dir, args, ft_strdup("./"), args->len_col);
 
 	if (!args->list_dir)
 		return ;
@@ -280,7 +282,7 @@ void	ft_ls(t_args *args)
 		if (args->l && total_blocks != -1)
 			ft_printf("total %d\n", total_blocks);
 		sorting_file(args, &dir_files);
-		display_files(dir_files, (args->l) ? true : false, ft_strjoin(curr->file->path, "/"), args->len_col);
+		display_files(dir_files, args, ft_strjoin(curr->file->path, "/"), args->len_col);
 		if (args->R)
 		{
 			t_args	*recursion_args = (t_args*)malloc(sizeof(t_args));

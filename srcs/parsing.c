@@ -48,6 +48,8 @@ void	is_option_valid(t_args *parsed_args, char *option)
 			case 'a': parsed_args->a = true; break;
 			case 'r': parsed_args->r = true; break;
 			case 't': parsed_args->t = true; break;
+			case 'd': parsed_args->d = true; break;
+			case '1': parsed_args->one = true; break;
 		}
 	}
 }
@@ -164,7 +166,12 @@ void	add_file(t_args *parsed_args, char *path)
 	
 	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
 	file_info->path = ft_strdup(path);
- 
+
+	if (parsed_args->d)
+	{
+		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
+		return ;
+	} 
 
 	if (S_ISDIR(buffer.st_mode))
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));

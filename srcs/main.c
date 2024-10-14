@@ -2,13 +2,15 @@
 
 void	init_struct(t_args *args)
 {
-	args->valid = "lRart";
+	args->valid = "lRartd1";
 		
 	args->l = false;
 	args->R = false;
 	args->a = false;
 	args->r = false;
 	args->t = false;
+	args->d = false;
+	args->one = false;
 
 	args->list_dir = NULL;
 	args->list_not_dir = NULL;
