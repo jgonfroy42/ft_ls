@@ -3,64 +3,64 @@
 
 int	convert_month(char *month)
 {
-	if (ft_strncmp(month, "Jan", 3))
+	if (ft_strncmp(month, "Jan", 3) == 0)
 		return 1;
-	if (ft_strncmp(month, "Feb", 3))
+	if (ft_strncmp(month, "Feb", 3) == 0)
 		return 2;
-	if (ft_strncmp(month, "Mar", 3))
+	if (ft_strncmp(month, "Mar", 3) == 0)
 		return 3;
-	if (ft_strncmp(month, "Apr", 3))
+	if (ft_strncmp(month, "Apr", 3) == 0)
 		return 4;
-	if (ft_strncmp(month, "May", 3))
+	if (ft_strncmp(month, "May", 3) == 0)
 		return 5;
-	if (ft_strncmp(month, "Jun", 3))
+	if (ft_strncmp(month, "Jun", 3) == 0)
 		return 6;
-	if (ft_strncmp(month, "Jul", 3))
+	if (ft_strncmp(month, "Jul", 3) == 0)
 		return 7;
-	if (ft_strncmp(month, "Aug", 3))
+	if (ft_strncmp(month, "Aug", 3) == 0)
 		return 8;
-	if (ft_strncmp(month, "Sep", 3))
+	if (ft_strncmp(month, "Sep", 3) == 0)
 		return 9;
-	if (ft_strncmp(month, "Oct", 3))
+	if (ft_strncmp(month, "Oct", 3) == 0)
 		return 10;
-	if (ft_strncmp(month, "Nov", 3))
+	if (ft_strncmp(month, "Nov", 3) == 0)
 		return 11;
-	if (ft_strncmp(month, "Dec", 3))
+	if (ft_strncmp(month, "Dec", 3) == 0)
 		return 12;
 
 	return -1;
 }
 
-bool	is_date_sorted(t_time t1, t_time t2)
+int	is_date_sorted(t_time t1, t_time t2)
 {
 	int	month_1;
 	int	month_2;
 
 	if (t1.year > t2.year)
-		return true;
+		return 1;
 	if (t1.year < t2.year)
-		return false;
+		return -1;
 
 	month_1 = convert_month(t1.month);
 	month_2 = convert_month(t2.month);
 
 	if (month_1 > month_2)
-		return true;
+		return 1;
 	if (month_1 < month_2)
-		return false;
+		return -1;
 	if (t1.day > t2.day)
-		return true;
+		return 1;
 	if (t1.day < t2.day)
-		return false;
+		return -1;
 	if (t1.hour > t2.hour)
-		return true;
+		return 1;
 	if (t1.hour < t2.hour)
-		return false;
+		return -1;
 	if (t1.minutes > t2.minutes)
-		return true;
+		return 1;
 	if (t1.minutes < t2.minutes)
-		return false;
-	return true;
+		return -1;
+	return 0;
 }
 
 
@@ -96,7 +96,10 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 
 	if (args->t)
 	{
-		if (is_date_sorted(a->file->date, b->file->date))
+	/*
+ 	* if is the same date we need to ASCII sort => is_date_sorted ret = 0;
+ 	*/ 
+		if (is_date_sorted(a->file->date, b->file->date) == 1)
 		{
 			if (!args->r)
 			{
@@ -108,8 +111,9 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 				ret = b;
 				ret->next = sort_files(args, a, b->next);
 			}
+			return (ret);
 		}
-		else
+		if (is_date_sorted(a->file->date, b->file->date) == -1)
 		{
 			if (args->r)
 			{
@@ -121,39 +125,35 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 				ret = b;
 				ret->next = sort_files(args, a, b->next);
 			}
+			return (ret);
 		}
 	}
 
+	if (is_ascii_sorted(a->file->path, b->file->path))
+	{
+		if (!args->r)
+		{
+			ret = a;
+			ret->next = sort_files(args, a->next, b);
+		}	
+		else
+		{
+			ret = b;
+			ret->next = sort_files(args, a, b->next);
+		}
+	}
 	else
 	{
-		if (is_ascii_sorted(a->file->path, b->file->path))
+		if (args->r)
 		{
-			if (!args->r)
-			{
-				ret = a;
-				ret->next = sort_files(args, a->next, b);
-			}	
-			else
-			{
-				ret = b;
-				ret->next = sort_files(args, a, b->next);
-			}
-		}
+			ret = a;
+			ret->next = sort_files(args, a->next, b);
+		}	
 		else
 		{
-			if (args->r)
-			{
-				ret = a;
-				ret->next = sort_files(args, a->next, b);
-			}	
-			else
-			{
-				ret = b;
-				ret->next = sort_files(args, a, b->next);
-			}
-		}
+			ret = b;
+			ret->next = sort_files(args, a, b->next);			}
 	}
-
 	return (ret);
 }
 
