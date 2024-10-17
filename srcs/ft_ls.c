@@ -25,6 +25,47 @@
  *		2) même fonction qu'en 1. b 
  *
  */
+
+char	get_xattr(char *path)
+{
+	/*
+ 	* MAN: 
+ 	* GNU ls uses a ‘.’ character to indicate a file with a security context, but no other alternate access method.
+ 	* A file with any other combination of alternate access methods is marked with a ‘+’ character.
+ 	*
+ 	* listxattr:
+ 	* If security context: there will be a element name security.*** in the list (ex: security.selinux)
+ 	* If other alternative access, there will element not name security.
+	*/ 
+
+	size_t	size_buf, size_key;
+	char	*buf, *to_free;
+	char	*position;
+
+	size_buf = listxattr(path, NULL, 0);
+	if (size_buf > 0 && (buf = malloc(size_buf)))
+	{
+		size_buf = listxattr(path, buf, size_buf);
+
+		to_free = buf;
+		while (size_buf > 0)
+		{
+			position = ft_strnstr(buf, "security.", size_buf);
+			if (!position)
+			{
+				free(to_free);
+				return '+';
+			}
+			size_key = ft_strlen(buf) + 1;
+			size_buf -= size_key;
+			buf += size_key;
+		}
+		free(to_free);
+		return '.';
+	}
+	return ' ';
+}
+
 bool	is_relative_path(char *path)
 {
 	if (path[0] == '.')
@@ -83,6 +124,8 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 			return 0;
 		}
 		file = create_new_file(buffer, args->l, args->t);
+		if (args->l)
+			file->xattr = get_xattr(real_path);
 		if (args->R)
 		{
 			if (S_ISDIR(buffer.st_mode))
@@ -205,8 +248,7 @@ void	display_files(t_list_files *list, t_args *args, char *parent_dir, size_t le
 		}
 		else
 		{
-			ft_printf("%s. %*d %-*s %-*s ", list->file->perm, LEN_LINKS, list->file->nb_links, LEN_OWNER, list->file->owner, LEN_GROUP, list->file->group);
-
+			ft_printf("%s%c %*d %-*s %-*s ", list->file->perm, list->file->xattr, LEN_LINKS, list->file->nb_links, LEN_OWNER, list->file->owner, LEN_GROUP, list->file->group);
 			/*
  			* LEN_COL need to include size of '$LEN_DEV_MAJOR, $LEN_DEV_MINOR' if there is c or b files
  			* in this case, LEN_DEV_MAJ != 0

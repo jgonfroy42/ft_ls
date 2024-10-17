@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <errno.h>
 # include <sys/sysmacros.h>
+# include <sys/xattr.h>
 
 # define LEN_LINKS len_col[0]
 # define LEN_OWNER len_col[1]
@@ -37,6 +38,7 @@ typedef struct s_file
 {
 	char		*path;
 	char		perm[11];
+	char		xattr;
 	unsigned int	nb_links;
 	char		*owner;
 	char		*group;

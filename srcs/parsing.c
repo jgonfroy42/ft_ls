@@ -5,6 +5,7 @@
 */
 
 
+
 t_time	convert_time(char *stime)
 {
 	t_time time;
@@ -117,6 +118,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	file->perm[7] = (buffer.st_mode & S_IROTH) ? 'r' : '-';
 	file->perm[8] = (buffer.st_mode & S_IWOTH) ? 'w' : '-';
 
+
 	//droits speciaux	
 	if (buffer.st_mode & S_ISUID)
 		file->perm[3] = (buffer.st_mode & S_IXUSR) ? 's' : 'S';
@@ -166,7 +168,6 @@ void	add_file(t_args *parsed_args, char *path)
 	
 	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
 	file_info->path = ft_strdup(path);
-
 	if (parsed_args->d)
 	{
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
