@@ -64,9 +64,11 @@ int	conv_str(char *s, t_flags format)
 
 	i = 0;
 	if (s == NULL)
-		s = "(null)";
-	if (format.precision != -1)
+		s = ft_strdup("(null)");
+	else if (format.precision != -1)
 		s = ft_substr(s, 0, format.precision);
+	else
+		s = ft_strdup(s);
 	size = ft_strlen(s);
 	if (format.minus == 1)
 		ft_putstr_fd(s, 1);
@@ -78,6 +80,7 @@ int	conv_str(char *s, t_flags format)
 	if (format.minus == 0)
 		ft_putstr_fd(s, 1);
 	format.size = format.size + i + size;
+	free(s);
 	return (format.size);
 }
 

@@ -54,7 +54,7 @@ char			*ft_itoa(int n)
 
 	nbr = (long int)n;
 	size = get_size(nbr);
-	if (!(s = ft_calloc(size + 1, sizeof(char))))
+	if (!(s = (char *)ft_calloc(size + 1, sizeof(char))))
 		return (NULL);
 	recursion(nbr, s, size - 1);
 	return (s);

@@ -167,8 +167,8 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 
 	if (args->l)
 	{
-		char	*nb_links= ft_itoa(file->nb_links);
-		char	*size = ft_itoa(file->size);
+		char	*nb_links = ft_itoa(file->nb_links);
+	//	char	*size = ft_itoa(file->size);
 
 		if (ft_strlen(nb_links) > args->LEN_LINKS)
  			args->LEN_LINKS = ft_strlen(nb_links);
@@ -192,9 +192,13 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 			free(nb_dev_major);
 			free(nb_dev_minor);
 		}
-		else if (ft_strlen(size) > args->LEN_SIZE)
- 			args->LEN_SIZE = ft_strlen(size);
-		free(size);
+		else
+		{
+			char	*size = ft_itoa(file->size);
+			if (ft_strlen(size) > args->LEN_SIZE)
+ 				args->LEN_SIZE = ft_strlen(size);
+			free(size);
+		}
 
 		return buffer.st_blocks / 2;
 	}
@@ -233,7 +237,7 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 
 void	display_files(t_list_files *list, t_args *args, char *parent_dir, size_t len_col[5])
 {
-	char	*link;
+	char	link[1024];
 	char	*real_path;
 
 	while(list)
@@ -269,15 +273,14 @@ void	display_files(t_list_files *list, t_args *args, char *parent_dir, size_t le
 			ft_printf(" %s", list->file->path);
 			if (list->file->perm[0] == 'l')
 			{
-				if ((link = (char *)malloc(list->file->size + 1)) != NULL)
+				int size_ret;
+				real_path = ft_strjoin(parent_dir, list->file->path);		
+				if ((size_ret = readlink(real_path, link, 1023)) != -1)
 				{
-					real_path = ft_strjoin(parent_dir, list->file->path);		
-					if (readlink(real_path, link, list->file->size + 1) != -1)
-						ft_printf(" -> %s", link);
-
-					free(link);
-					free(real_path);
+					link[size_ret] = '\0';	
+					ft_printf(" -> %s", link);
 				}
+				free(real_path);
 			}
 			ft_printf("\n");	
 		}
