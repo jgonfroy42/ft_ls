@@ -60,6 +60,11 @@ int	is_date_sorted(t_time t1, t_time t2)
 		return 1;
 	if (t1.minutes < t2.minutes)
 		return -1;
+	if (t1.seconds > t2.seconds)
+		return 1;
+	if (t1.seconds < t2.seconds)
+		return -1;
+
 	return 0;
 }
 
@@ -94,14 +99,14 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 	if (b == NULL)
 		return a;
 
-	if (args->t)
+	if (args->flags & t_flag)
 	{
 	/*
  	* if is the same date we need to ASCII sort => is_date_sorted ret = 0;
  	*/ 
 		if (is_date_sorted(a->file->date, b->file->date) == 1)
 		{
-			if (!args->r)
+			if (!(args->flags & r_flag))
 			{
 				ret = a;
 				ret->next = sort_files(args, a->next, b);
@@ -115,7 +120,7 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 		}
 		if (is_date_sorted(a->file->date, b->file->date) == -1)
 		{
-			if (args->r)
+			if ((args->flags & r_flag))
 			{
 				ret = a;
 				ret->next = sort_files(args, a->next, b);
@@ -131,7 +136,7 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 
 	if (is_ascii_sorted(a->file->path, b->file->path))
 	{
-		if (!args->r)
+		if (!(args->flags & r_flag))
 		{
 			ret = a;
 			ret->next = sort_files(args, a->next, b);
@@ -144,7 +149,7 @@ t_list_files	*sort_files(t_args *args, t_list_files *a,t_list_files *b)
 	}
 	else
 	{
-		if (args->r)
+		if ((args->flags & r_flag))
 		{
 			ret = a;
 			ret->next = sort_files(args, a->next, b);

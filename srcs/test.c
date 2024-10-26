@@ -18,8 +18,10 @@ void	test_parsing(t_args *args)
  */
 	void	(*pfunc)(void *) = &display_list;
 
+	ft_printf("flags: %d\n", args->flags);
+
 	ft_printf("---TEST DU PARSING---\n\n");
-	ft_printf("l : %i\na : %i\nR : %i\nr : %i\nt : %i\n", args->l, args->a, args->R, args->r, args->t);
+	ft_printf("l : %i\na : %i\nR : %i\nr : %i\nt : %i\nd : %i\n1 : %i\n", (args->flags & l_flag) == l_flag, (args->flags & a_flag) == a_flag, (args->flags & R_flag) == R_flag, (args->flags & r_flag) == r_flag, (args->flags & t_flag) == t_flag, (args->flags & d_flag) == d_flag, (args->flags & one_flag) == one_flag);
 
 	ft_printf("\nDirectory\n");
 	ft_lstiter((t_list *)args->list_dir, pfunc);

@@ -2,15 +2,7 @@
 
 void	init_struct(t_args *args)
 {
-	args->valid = "lRartd1";
-		
-	args->l = false;
-	args->R = false;
-	args->a = false;
-	args->r = false;
-	args->t = false;
-	args->d = false;
-	args->one = false;
+	args->flags = 0;
 
 	args->list_dir = NULL;
 	args->list_not_dir = NULL;
@@ -39,10 +31,10 @@ int main(int ac, char **av)
 
 /*
  * test
- 
-	tests(args);
-	(void)av;
-*/
+ */ 
+//	tests(args);
+//	(void)av;
+
 
 /*
  * clean

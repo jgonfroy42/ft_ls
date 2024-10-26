@@ -36,7 +36,7 @@ void	is_option_valid(t_args *parsed_args, char *option)
 {
 	for (int i = 0; option[i] != 0; i++)
 	{
-		if (!ft_strchr(parsed_args->valid, option[i]))
+		if (!ft_strchr(VALID_FLAGS, option[i]))
 		{
 			ft_printf("ls : invalid option -- %c", option[i]);
 			exit(1);
@@ -44,13 +44,13 @@ void	is_option_valid(t_args *parsed_args, char *option)
 
 		switch (option[i])
 		{
-			case 'l': parsed_args->l = true; break;
-			case 'R': parsed_args->R = true; break;
-			case 'a': parsed_args->a = true; break;
-			case 'r': parsed_args->r = true; break;
-			case 't': parsed_args->t = true; break;
-			case 'd': parsed_args->d = true; break;
-			case '1': parsed_args->one = true; break;
+			case 'l': parsed_args->flags |= (l_flag); break;
+			case 'R': parsed_args->flags |= (R_flag); break;
+			case 'a': parsed_args->flags |= (a_flag); break;
+			case 'r': parsed_args->flags |= (r_flag); break;
+			case 't': parsed_args->flags |= (t_flag); break;
+			case 'd': parsed_args->flags |= (d_flag); break;
+			case '1': parsed_args->flags |= (one_flag); break;
 		}
 	}
 }
@@ -69,7 +69,7 @@ t_file	*init_file()
 	return file;
 }
 
-t_file	*create_new_file(struct stat buffer, bool l, bool t)
+t_file	*create_new_file(struct stat buffer, int flags)
 {
 	/*
  	* total of dir is sum of buffer.st_blocks;
@@ -81,7 +81,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 
 	file = init_file();
 
-	if ((!l && !t) || !file)
+	if (((flags & (l_flag | t_flag)) == 0) || !file)
 		return file;
 	
 	file->date = convert_time(ctime(&buffer.st_mtime));
@@ -95,7 +95,7 @@ t_file	*create_new_file(struct stat buffer, bool l, bool t)
 	if (((diff / 6) / (365.25 / 12)) / 24 < 3600)
 		file->date.old = false;
 
-	if (!l)
+	if ((flags & l_flag) != l_flag)
 		return file;
 	
 	switch (buffer.st_mode & S_IFMT)
@@ -166,9 +166,9 @@ void	add_file(t_args *parsed_args, char *path)
 		return ;
 	}
 	
-	file_info = create_new_file(buffer, parsed_args->l, parsed_args->t);
+	file_info = create_new_file(buffer, parsed_args->flags);
 	file_info->path = ft_strdup(path);
-	if (parsed_args->d)
+	if ((parsed_args->flags & d_flag) == d_flag)
 	{
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
 		return ;
@@ -184,7 +184,7 @@ void	add_file(t_args *parsed_args, char *path)
  	* 	act like a dir
  	*/
   
-	else if (!parsed_args->l && !stat(path, &buffer_symlink) && S_ISDIR(buffer_symlink.st_mode))
+	else if ((parsed_args->flags & l_flag) != l_flag && !stat(path, &buffer_symlink) && S_ISDIR(buffer_symlink.st_mode))
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
 	else
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));

@@ -24,11 +24,22 @@
 # define LEN_SIZE len_col[3]
 # define LEN_DEV_MAJ len_col[4]
 
+# define l_flag 1 << 0
+# define R_flag 1 << 1
+# define a_flag 1 << 2
+# define r_flag 1 << 3
+# define t_flag 1 << 4
+# define d_flag 1 << 5
+# define one_flag 1 << 6
+# define VALID_FLAGS "lRartd1" 
+
 typedef struct	time
 {
 	char	*month;
 	int	day;
 	int	hour;
+	
+	int	seconds;
 	int	minutes;
 	int	year;
 	bool	old;
@@ -64,24 +75,12 @@ typedef struct	s_list_raw_args
 
 typedef struct	s_args
 {
-
 /*
- * cmd options
+ * parsed arguments
  */
-	const char	*valid;
 
-	bool	l;
-	bool	R;
-	bool	a;
-	bool	r;
-	bool	t;
-	bool	d;
-	bool	one;
-
-
-/*
- * cmd arguments
- */
+	int8_t	flags;
+	
 	bool			invalid_path;
 	struct s_list_files	*list_dir;
 	struct s_list_files	*list_not_dir;
@@ -105,7 +104,7 @@ typedef struct	s_args
  */
 
 t_file	*init_file();
-t_file	*create_new_file(struct stat buffer, bool l, bool t);
+t_file	*create_new_file(struct stat buffer, int flags);
 void	add_file(t_args *parsed_args, char *path);
 int	parse_args(t_args *parsed_args, char **args);
 t_time	convert_time(char *stime);
