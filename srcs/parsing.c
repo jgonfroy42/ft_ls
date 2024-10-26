@@ -52,7 +52,9 @@ void	is_option_valid(t_args *parsed_args, char *option)
 			case 'r': parsed_args->flags |= (r_flag); break;
 			case 't': parsed_args->flags |= (t_flag); break;
 			case 'd': parsed_args->flags |= (d_flag); break;
-			case 'A': parsed_args->flags |= (A_flag | a_flag) ; break;
+			case 'A': parsed_args->flags |= (A_flag | a_flag); break;
+			case 'm': parsed_args->flags |= m_flag; break;
+			case 'f': parsed_args->flags |= (f_flag | a_flag); break;
 			case '1': parsed_args->flags |= (one_flag); break;
 		}
 	}

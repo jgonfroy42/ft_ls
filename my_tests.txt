@@ -11,3 +11,7 @@
 -Aa
 -AaA
 -aaaaaA
+-f test srcs -l
+-f
+-fa
+-df

@@ -293,7 +293,8 @@ void	ft_ls(t_args *args)
  * tri et affichage des arguments autres que les dir
  */
 
-	sorting_file(args, &args->list_not_dir);
+	if ((args->flags & f_flag) != f_flag)
+		sorting_file(args, &args->list_not_dir);
 	display_files(args->list_not_dir, args, ft_strdup("./"), args->len_col);
 
 	if (!args->list_dir)
@@ -308,7 +309,9 @@ void	ft_ls(t_args *args)
 
 	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path || (args->flags & R_flag) == R_flag)
 		display_name = true;
-	sorting_file(args, &args->list_dir);
+	
+	if ((args->flags & f_flag) != f_flag)
+		sorting_file(args, &args->list_dir);
 	curr = args->list_dir;
 	while (curr)
 	{
@@ -319,7 +322,8 @@ void	ft_ls(t_args *args)
 		
 		if ((args->flags & l_flag) == l_flag && total_blocks != -1)
 			ft_printf("total %d\n", total_blocks);
-		sorting_file(args, &dir_files);
+		if ((args->flags & f_flag) != f_flag)
+			sorting_file(args, &dir_files);
 		display_files(dir_files, args, ft_strjoin(curr->file->path, "/"), args->len_col);
 		if ((args->flags & R_flag) == R_flag)
 		{

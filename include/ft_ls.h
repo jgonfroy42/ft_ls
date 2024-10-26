@@ -30,9 +30,11 @@
 # define r_flag 1 << 3
 # define t_flag 1 << 4
 # define d_flag 1 << 5
-# define one_flag 1 << 6
-# define A_flag 1 << 7
-# define VALID_FLAGS "lRartd1A" 
+# define A_flag 1 << 6
+# define m_flag 1 << 7
+# define f_flag	1 << 8
+# define one_flag 1 << 9 
+# define VALID_FLAGS "lRartdmfA1" 
 
 typedef struct	time
 {
