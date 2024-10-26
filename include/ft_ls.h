@@ -145,4 +145,11 @@ void	sorting_file(t_args *args, t_list_files **files);
 
 void	print_error(char *problem, char *path, char *strerr);
 
+/*
+ * utils_flags.c
+ */
+
+bool has_flag(int16_t flags, int to_check);
+bool has_any_flag(int16_t flags, int to_check);
+
 #endif

@@ -11,6 +11,7 @@ SRCS	= $(SRCS_DIR)main.c \
 	$(SRCS_DIR)sorting.c \
 	$(SRCS_DIR)ft_ls.c \
 	$(SRCS_DIR)handle_error.c \
+	$(SRCS_DIR)utils_flags.c
 
 CC	= gcc
 CFLAGS	= -Wall -Werror -Wextra -I ./include/

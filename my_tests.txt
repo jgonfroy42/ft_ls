@@ -15,3 +15,8 @@
 -f
 -fa
 -df
+-r -t
+-t -rrr
+-taA test -d
+-rRd
+-rRl

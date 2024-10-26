@@ -105,7 +105,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	char		*real_path;
 
 	real_path = ft_strjoin(dir_path, path);
-	if ((args->flags & l_flag) == l_flag || (args->flags & t_flag) == t_flag)
+	if (has_any_flag(args->flags, l_flag | t_flag))
 	{
 		if (lstat(real_path, &buffer) != 0)
 		{
@@ -115,9 +115,9 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 			return 0;
 		}
 		file = create_new_file(buffer, args->flags);
-		if ((args->flags & l_flag) == l_flag)
+		if (has_flag(args->flags, l_flag))
 			file->xattr = get_xattr(real_path);
-		if ((args->flags & R_flag) == R_flag)
+		if (has_flag(args->flags, R_flag))
 		{
 			if (S_ISDIR(buffer.st_mode))
 			{
@@ -134,7 +134,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	else
 	{
 		file = init_file();
-		if ((args->flags & R_flag) == R_flag)
+		if (has_flag(args->flags, R_flag))
 		{
 			if (lstat(real_path, &buffer) != 0)
 				print_error("ls: cannot acces '", path, strerror(errno));
@@ -156,7 +156,7 @@ long int	add_dir_files(t_list_files **list_files, t_args *args, char *dir_path, 
 	free(dir_path);
 	free(real_path);
 
-	if ((args->flags & l_flag) == l_flag)
+	if (has_flag(args->flags, l_flag))
 	{
 		char	*nb_links = ft_itoa(file->nb_links);
 
@@ -216,9 +216,9 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 
 	while ((entry = readdir(dir)) != NULL)
 	{
-	      	if ((args->flags & a_flag) != a_flag && entry->d_name[0] == '.')
+	      	if (!(has_flag(args->flags, a_flag)) && entry->d_name[0] == '.')
 			continue;
-		if ((args->flags & A_flag) == A_flag && is_relative_path(entry->d_name))
+		if (has_flag(args->flags, A_flag) && is_relative_path(entry->d_name))
 			continue;
 		total_blocks += add_dir_files(files, args, ft_strjoin(path, "/"), ft_strdup(entry->d_name));
 
@@ -234,11 +234,10 @@ void	display_files(t_list_files *list, t_args *args, char *parent_dir, size_t le
 
 	while(list)
 	{	
-		if ((args->flags & l_flag) != l_flag)
-			
+		if (!has_flag(args->flags, l_flag))
 		{
 			ft_printf("%s", list->file->path);
-			if (list->next && ((args->flags & one_flag) != one_flag))
+			if (list->next && !(has_flag(args->flags, one_flag)))
 				ft_printf("  ");
 			else
 				ft_printf("\n");
@@ -293,7 +292,7 @@ void	ft_ls(t_args *args)
  * tri et affichage des arguments autres que les dir
  */
 
-	if ((args->flags & f_flag) != f_flag)
+	if (!has_flag(args->flags, f_flag))
 		sorting_file(args, &args->list_not_dir);
 	display_files(args->list_not_dir, args, ft_strdup("./"), args->len_col);
 
@@ -310,7 +309,7 @@ void	ft_ls(t_args *args)
 	if (args->list_not_dir || ft_lstsize((t_list *)args->list_dir) > 1 || args->invalid_path || (args->flags & R_flag) == R_flag)
 		display_name = true;
 	
-	if ((args->flags & f_flag) != f_flag)
+	if (!has_flag(args->flags, f_flag))
 		sorting_file(args, &args->list_dir);
 	curr = args->list_dir;
 	while (curr)
@@ -320,12 +319,12 @@ void	ft_ls(t_args *args)
 
 		total_blocks = get_dir_files(args, &dir_files,  curr->file->path);
 		
-		if ((args->flags & l_flag) == l_flag && total_blocks != -1)
+		if (has_flag(args->flags, l_flag) && total_blocks != -1)
 			ft_printf("total %d\n", total_blocks);
-		if ((args->flags & f_flag) != f_flag)
+		if (!has_flag(args->flags, f_flag))
 			sorting_file(args, &dir_files);
 		display_files(dir_files, args, ft_strjoin(curr->file->path, "/"), args->len_col);
-		if ((args->flags & R_flag) == R_flag)
+		if (has_flag(args->flags, R_flag))
 		{
 			t_args	*recursion_args = (t_args*)malloc(sizeof(t_args));
 			copy_args(args, recursion_args);

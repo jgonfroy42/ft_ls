@@ -86,7 +86,7 @@ t_file	*create_new_file(struct stat buffer, int flags)
 
 	file = init_file();
 
-	if (((flags & (l_flag | t_flag)) == 0) || !file)
+	if (!has_any_flag(flags, l_flag | t_flag) || !file)
 		return file;
 	
 	file->date = convert_time(ctime(&buffer.st_mtime));
@@ -100,7 +100,7 @@ t_file	*create_new_file(struct stat buffer, int flags)
 	if (((diff / 6) / (365.25 / 12)) / 24 < 3600)
 		file->date.old = false;
 
-	if ((flags & l_flag) != l_flag)
+	if (!has_flag(flags, l_flag))
 		return file;
 	
 	switch (buffer.st_mode & S_IFMT)
@@ -173,7 +173,7 @@ void	add_file(t_args *parsed_args, char *path)
 	
 	file_info = create_new_file(buffer, parsed_args->flags);
 	file_info->path = ft_strdup(path);
-	if ((parsed_args->flags & d_flag) == d_flag)
+	if (has_flag(parsed_args->flags, d_flag))
 	{
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
 		return ;
@@ -188,8 +188,8 @@ void	add_file(t_args *parsed_args, char *path)
  	* ELSE
  	* 	act like a dir
  	*/
-  
-	else if ((parsed_args->flags & l_flag) != l_flag && !stat(path, &buffer_symlink) && S_ISDIR(buffer_symlink.st_mode))
+ 	 
+	else if ((!has_flag(parsed_args->flags, l_flag)) && !stat(path, &buffer_symlink) && S_ISDIR(buffer_symlink.st_mode))
 		ft_lstadd_back((t_list **)&parsed_args->list_dir, ft_lstnew(file_info));
 	else
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));
