@@ -7,4 +7,7 @@
  -drR test/_ascii_sorted test/toto.txt test/symbolic_link_dir test/recursion
 -d test TODO.txt
 -l /dev
-
+-aA
+-Aa
+-AaA
+-aaaaaA

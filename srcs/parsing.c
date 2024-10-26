@@ -41,15 +41,18 @@ void	is_option_valid(t_args *parsed_args, char *option)
 			ft_printf("ls : invalid option -- %c", option[i]);
 			exit(1);
 		}
-
+	/*
+	 * in case of -A and -a, the last one count
+	 */
 		switch (option[i])
 		{
 			case 'l': parsed_args->flags |= (l_flag); break;
 			case 'R': parsed_args->flags |= (R_flag); break;
-			case 'a': parsed_args->flags |= (a_flag); break;
+			case 'a': parsed_args->flags |= (a_flag ); parsed_args->flags &= ~(A_flag);  break;
 			case 'r': parsed_args->flags |= (r_flag); break;
 			case 't': parsed_args->flags |= (t_flag); break;
 			case 'd': parsed_args->flags |= (d_flag); break;
+			case 'A': parsed_args->flags |= (A_flag | a_flag) ; break;
 			case '1': parsed_args->flags |= (one_flag); break;
 		}
 	}
@@ -223,7 +226,6 @@ int	parse_args(t_args *parsed_args, char **args)
 		else
 			ft_lstadd_back((t_list **)&list_paths, ft_lstnew(*args));
 	}
-
 	curr = list_paths;
 	while (curr)
 	{

@@ -31,7 +31,8 @@
 # define t_flag 1 << 4
 # define d_flag 1 << 5
 # define one_flag 1 << 6
-# define VALID_FLAGS "lRartd1" 
+# define A_flag 1 << 7
+# define VALID_FLAGS "lRartd1A" 
 
 typedef struct	time
 {
@@ -79,7 +80,7 @@ typedef struct	s_args
  * parsed arguments
  */
 
-	int8_t	flags;
+	int16_t	flags;
 	
 	bool			invalid_path;
 	struct s_list_files	*list_dir;

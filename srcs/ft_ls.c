@@ -216,7 +216,9 @@ int	get_dir_files(t_args *args, t_list_files **files, char *path)
 
 	while ((entry = readdir(dir)) != NULL)
 	{
-		if ((args->flags & a_flag) != a_flag && entry->d_name[0] == '.')
+	      	if ((args->flags & a_flag) != a_flag && entry->d_name[0] == '.')
+			continue;
+		if ((args->flags & A_flag) == A_flag && is_relative_path(entry->d_name))
 			continue;
 		total_blocks += add_dir_files(files, args, ft_strjoin(path, "/"), ft_strdup(entry->d_name));
 
@@ -233,6 +235,7 @@ void	display_files(t_list_files *list, t_args *args, char *parent_dir, size_t le
 	while(list)
 	{	
 		if ((args->flags & l_flag) != l_flag)
+			
 		{
 			ft_printf("%s", list->file->path);
 			if (list->next && ((args->flags & one_flag) != one_flag))
