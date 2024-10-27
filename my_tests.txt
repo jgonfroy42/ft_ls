@@ -20,3 +20,11 @@
 -taA test -d
 -rRd
 -rRl
+-ft
+-tf
+-rf
+-fr
+-fl
+-lf
+-dl
+-l test/toto. test/toto.txt 

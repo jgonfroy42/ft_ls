@@ -50,11 +50,11 @@ void	is_option_valid(t_args *parsed_args, char *option)
 			case 'R': parsed_args->flags |= (R_flag); break;
 			case 'a': parsed_args->flags |= (a_flag ); parsed_args->flags &= ~(A_flag);  break;
 			case 'r': parsed_args->flags |= (r_flag); break;
-			case 't': parsed_args->flags |= (t_flag); break;
+			case 't': parsed_args->flags |= (t_flag); parsed_args->flags &= ~(f_flag); break;
 			case 'd': parsed_args->flags |= (d_flag); break;
 			case 'A': parsed_args->flags |= (A_flag | a_flag); break;
 			case 'm': parsed_args->flags |= m_flag; break;
-			case 'f': parsed_args->flags |= (f_flag | a_flag); break;
+			case 'f': parsed_args->flags |= (f_flag | a_flag); parsed_args->flags &= ~(l_flag | t_flag | r_flag); break;
 			case '1': parsed_args->flags |= (one_flag); break;
 		}
 	}
@@ -173,6 +173,8 @@ void	add_file(t_args *parsed_args, char *path)
 	
 	file_info = create_new_file(buffer, parsed_args->flags);
 	file_info->path = ft_strdup(path);
+	if (has_flag(parsed_args->flags, l_flag))
+			file_info->xattr = get_xattr(path);
 	if (has_flag(parsed_args->flags, d_flag))
 	{
 		ft_lstadd_back((t_list **)&parsed_args->list_not_dir, ft_lstnew(file_info));

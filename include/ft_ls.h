@@ -124,6 +124,7 @@ t_list_files	*copy_list(t_list_files *src);
  * ft_ls.c
  */
 
+char	get_xattr(char *path);
 void	ft_ls(t_args *args);
 
 /*
